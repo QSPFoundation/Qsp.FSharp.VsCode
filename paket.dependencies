@@ -1,0 +1,43 @@
+source https://api.nuget.org/v3/index.json
+storage:none
+
+clitool dotnet-fable < 2.0
+nuget Fable.Core < 2.0
+nuget Fable.HtmlConverter < 2.0
+nuget Fable.Import.Node < 2.0
+nuget Fable.Import.Browser < 2.0
+
+git https://github.com/fsharp/FsAutoComplete.git master build:"build.cmd", OS: win
+git https://github.com/fsharp/FsAutoComplete.git master build:"build.sh", OS: linux
+git https://github.com/fsharp/FsAutoComplete.git master build:"build.sh", OS: osx
+
+
+git https://github.com/ionide/Forge.git master build:"build.cmd", OS: win
+git https://github.com/ionide/Forge.git master build:"build.cmd", OS: linux
+git https://github.com/ionide/Forge.git master build:"build.sh", OS: osx
+
+git https://github.com/ionide/ionide-fsgrammar.git master
+
+github ionide/ionide-vscode-helpers src/Fable.Import.VSCode.fs
+github ionide/ionide-vscode-helpers src/Helpers.fs
+github ionide/ionide-vscode-helpers src/Fable.Import.Showdown.fs
+github ionide/ionide-vscode-helpers src/Fable.Import.VSCode.LanguageServer.fs
+
+group build
+  source https://api.nuget.org/v3/index.json
+
+  nuget Fake.Core.Target
+  nuget Fake.Core.Process
+  nuget Fake.Core.ReleaseNotes
+  nuget Fake.Core.Environment
+  nuget Fake.Core.UserInput
+  nuget Fake.DotNet.Cli
+  nuget Fake.DotNet.AssemblyInfoFile
+  nuget Fake.DotNet.Paket
+  nuget Fake.DotNet.MsBuild
+  nuget Fake.IO.FileSystem
+  nuget Fake.IO.Zip
+  nuget Fake.Api.GitHub
+  nuget Fake.Tools.Git
+  nuget Fake.JavaScript.Yarn
+
