@@ -1560,6 +1560,11 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Enables generation of `.binlog` file for project loading. It works only for fresh, non-cached project loading. Run `F#: Clear Cache` and reload window to force fresh loading of all projects"
+				},
+				"FSharp.fsiSendConfiguration": {
+					"type": "string",
+					"default": "{\"Wait\":50.0,\"CharsBySize\":1000}",
+					"description": "By default `{\"Wait\":50.0,\"CharsBySize\":1000}`"
 				}
 			}
 		},
