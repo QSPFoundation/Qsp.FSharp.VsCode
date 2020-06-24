@@ -27,4 +27,5 @@
       "foreground": "#ff8b2c"
     }
   },
+  "FSharp.suggestSdkScripts": false,
 }

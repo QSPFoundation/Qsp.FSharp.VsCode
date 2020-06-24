@@ -312,13 +312,14 @@ module Fsi =
         |> Promise.onFail (fun _ ->
             window.showErrorMessage "Failed to spawn FSI, please ensure it's in PATH" |> ignore)
 
-    let private chunkStringBySize (size : int) (str : string) =
+    let chunkStringBySize (size : int) (str : string) =
         let mutable i1 = 0
         [while i1 < str.Length do
             let i2 = min (i1 + size) (str.Length)
             yield str.[i1..i2-1]
             i1 <- i2]
 
+    type T = { Wait : float; CharsBySize : int }
     let private send (msg : string) =
         let msgWithNewline = msg + (if msg.Contains "//" then "\n" else "") + ";;\n"
         match fsiOutput with
@@ -326,8 +327,45 @@ module Fsi =
         | Some fo -> Promise.lift fo
         |> Promise.onSuccess (fun fp ->
             fp.show true
-            fp.sendText(msgWithNewline, false)
-            lastSelectionSent <- Some msg
+            let fsiSendConfiguration = "FSharp.fsiSendConfiguration"
+            let defConfig = { Wait = 50.; CharsBySize = 1000 }
+            // Configuration.setGlobal fsiSendConfiguration defConfig
+            // ['a'..'z'] @ ['A'..'Z'] |> List.map string |> String.concat ""
+            // |> chunkStringBySize 30
+
+            match Configuration.tryGet fsiSendConfiguration with // TODO: Accessing a resource scoped configuration without providing a resource is not expected. To get the effective value for '[fsharp]', provide the URI of a resource or 'null' for any resource.
+            | Some str ->
+                let config =
+                    try
+                        printfn "something my = === = == = "
+                        (ofJson str : T)
+                    with e ->
+                        printfn "FSharp.fsiSendConfiguration error:\n%A" e.Message
+                        defConfig
+                let rec f = function
+                    | x :: xs ->
+                        setTimeout (fun () ->
+                            fp.sendText(x, false)
+                            f xs ) config.Wait |> ignore
+                    | [] ->
+                        lastSelectionSent <- Some msg
+                msgWithNewline
+                |> chunkStringBySize config.CharsBySize
+                |> f
+            | None ->
+                fp.sendText(msgWithNewline, false)
+                lastSelectionSent <- Some msg
+
+            // { Wait = 50.; CharsBySize = 256 }
+            
+            //send in chunks of 256, terminal has a character limit
+            // let x =
+            //     msgWithNewline
+            //     |> chunkStringBySize 256
+            //     |> List.fold (fun st x ->
+            //         fun () -> setTimeout (fun () -> fp.sendText(x, false); st ()) 200. |> ignore ) (fun () -> ())
+            // x ()
+
         )
         |> Promise.onFail (fun _ ->
             window.showErrorMessage "Failed to send text to FSI" |> ignore)
