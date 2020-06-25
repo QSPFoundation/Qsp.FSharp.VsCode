@@ -536,112 +536,18 @@ Consider:
         cl
 
     let getOptions () = promise {
-        let runtimeSettingsKey = "FSharp.fsacRuntime"
-
-        let targetRuntime: Types.ConfigValue<Types.FSACTargetRuntime> =
-            let configured = Configuration.tryGet runtimeSettingsKey
-
-            match configured with
-            | Some "netcore" ->
-                Types.UserSpecified Types.FSACTargetRuntime.NetcoreFdd
-            | Some "net" ->
-                Types.UserSpecified Types.FSACTargetRuntime.NET
-            | Some v ->
-                Types.Implied Types.FSACTargetRuntime.NetcoreFdd
-            | None ->
-                Types.Implied Types.FSACTargetRuntime.NetcoreFdd
-
-        let setRuntime runtime =
-            let value =
-                match runtime with
-                | Types.FSACTargetRuntime.NET -> "net"
-                | Types.FSACTargetRuntime.NetcoreFdd -> "netcore"
-            Configuration.set runtimeSettingsKey value
-            |> Promise.bind (fun _ -> vscode.window.showInformationMessage("Please reload your VSCode instance for this change to take effect"))
-            |> Promise.map ignore
-
-        let suggestNet () =
-            promise {
-                let! result = vscode.window.showInformationMessage("Consider using the .NET Framework/Mono language services by setting `FSharp.fsacRuntime` to `net` and installing .NET/Mono as appropriate for your system.", "Use .Net Framework")
-                match result with
-                | "Use .Net Framework" -> do! setRuntime Types.FSACTargetRuntime.NET
-                | _ -> ()
-            }
-
-        let suggestNetCore () = promise {
-            let! result = vscode.window.showInformationMessage("Consider using the .NET Core language services by setting `FSharp.fsacRuntime` to `netcore`", "Use .Net Core")
-            match result with
-            | "Use .Net Core" -> do! setRuntime Types.FSACTargetRuntime.NetcoreFdd
-            | _ -> ()
-        }
-
-        let monoNotFound () = promise {
-            let msg = """
-            Cannot start .NET Framework/Mono language services because `mono` was not found.
-            Consider:
-            * setting the `FSharp.monoPath` settings key to a `mono` binary,
-            * including `mono` in your PATH, or
-            * installing the .NET Core SDK and using the `FSharp.fsacRuntime` `netcore` language settings
-            """
-            let! result = vscode.window.showErrorMessage(msg, "Use .Net Core")
-            let! _ =
-                match result with
-                | "Use .Net Core" -> setRuntime Types.FSACTargetRuntime.NetcoreFdd
-                | _ -> promise.Return ()
-            return failwith "no `mono` binary found"
-        }
-
-        let dotnetNotFound () = promise {
-            let msg = """
-            Cannot start .NET Core language services because `dotnet` was not found.
-            Consider:
-            * setting the `FSharp.dotnetRoot` settings key to a directory with a `dotnet` binary,
-            * including `dotnet` in your PATH,
-            * installing .NET Core into one of the default locations, or
-            * using the `net` `FSharp.fsacRuntime` to use mono instead
-            """
-            let! result = vscode.window.showErrorMessage(msg, "Use .Net Framework")
-            let! _ =
-                match result with
-                | "Use .Net Framework" -> setRuntime Types.FSACTargetRuntime.NET
-                | _ -> promise.Return ()
-            return failwith "no `dotnet` binary found"
-        }
-
-        let backgroundSymbolCache = "FSharp.enableBackgroundServices" |> Configuration.get true
-        let fsacAttachDebugger = "FSharp.fsac.attachDebugger" |> Configuration.get false
-        let fsacNetcorePath = "FSharp.fsac.netCoreDllPath" |> Configuration.get ""
-        let fsacNetPath = "FSharp.fsac.netExePath" |> Configuration.get ""
-        let verbose = "FSharp.verboseLogging" |> Configuration.get false
-
-        let spawnNetCore dotnet =
-            let fsautocompletePath =
-                if String.IsNullOrEmpty fsacNetcorePath then VSCodeExtension.ionidePluginPath () + "/bin_netcore/fsautocomplete.dll"
-                else fsacNetcorePath
-            printfn "FSAC (NETCORE): '%s'" fsautocompletePath
-            let args =
-                [
-                    yield fsautocompletePath
-                    if fsacAttachDebugger then yield "--attachdebugger"
-                    if backgroundSymbolCache then yield "--background-service-enabled"
-                    if verbose then yield  "--verbose"
-                ] |> ResizeArray
-
-            createObj [
-                "command" ==> dotnet
-                "args" ==> args
-                "transport" ==> 0
-            ]
-
         let spawnNetWin () =
             let fsautocompletePath =
-                if String.IsNullOrEmpty fsacNetPath then VSCodeExtension.ionidePluginPath () + "/bin/fsautocomplete.exe"
-                else fsacNetPath
+                // if String.IsNullOrEmpty fsacNetPath then
+                // VSCodeExtension.ionidePluginPath () + "/bin/YacsServer.exe"
+                // "file:///E:/Project/YetAnotherSpellCheckerServer/YacsServer/bin/Debug/net461/YacsServer.exe"
+                "E:/Project/YetAnotherSpellCheckerServer/YacsServer/bin/Debug/net461/YacsServer.exe"
+                // else fsacNetPath
             printfn "FSAC (NET): '%s'" fsautocompletePath
             let args =
                 [
-                    if backgroundSymbolCache then yield "--background-service-enabled"
-                    if verbose then yield  "--verbose"
+                    // if backgroundSymbolCache then yield "--background-service-enabled"
+                    // if verbose then yield  "--verbose"
                 ] |> ResizeArray
 
             createObj [
@@ -649,128 +555,79 @@ Consider:
                 "args" ==> args
                 "transport" ==> 0
             ]
-
-        let spawnNetMono mono =
-            let fsautocompletePath =
-                if String.IsNullOrEmpty fsacNetPath then VSCodeExtension.ionidePluginPath () + "/bin/fsautocomplete.exe"
-                else fsacNetPath
-            printfn "FSAC (MONO): '%s'" fsautocompletePath
-            let args =
-                [
-                    yield fsautocompletePath
-                    if backgroundSymbolCache then yield "--background-service-enabled"
-                    if verbose then yield  "--verbose"
-                ] |> ResizeArray
-
-            createObj [
-                "command" ==> mono
-                "args" ==> args
-                "transport" ==> 0
-            ]
-
-        let! mono = Environment.mono
-        let! dotnet = Environment.dotnet
-
-        printfn "RUNTIME: %A, MONO: %A, DOTNET: %A" targetRuntime mono dotnet
-        // The matrix here is a 2x3 table: .Net/.Net Core target on one axis, Windows/Mono/Dotnet execution environment on the other
-        match targetRuntime, mono, dotnet with
-        // for any configuration, if the user specifies the framework to use do not suggest another framework for them
-
-        // .Net framework handling
-        | Types.UserSpecified Types.FSACTargetRuntime.NET, _ , _ when Environment.isWin ->
-            clientType <- Types.FSACTargetRuntime.NET
-            return spawnNetWin ()
-        | Types.UserSpecified Types.FSACTargetRuntime.NET, Some mono, _ ->
-            clientType <- Types.FSACTargetRuntime.NET
-            return spawnNetMono mono
-        | Types.UserSpecified Types.FSACTargetRuntime.NET, None, _ ->
-            clientType <- Types.FSACTargetRuntime.NET
-            return! monoNotFound ()
-
-        // dotnet SDK handling
-        | Types.UserSpecified Types.FSACTargetRuntime.NetcoreFdd, _, Some dotnet ->
-            clientType <- Types.FSACTargetRuntime.NetcoreFdd
-            return spawnNetCore dotnet
-        | Types.UserSpecified Types.FSACTargetRuntime.NetcoreFdd, _, None ->
-            clientType <- Types.FSACTargetRuntime.NetcoreFdd
-            return! dotnetNotFound ()
-
-        // when we infer a runtime then we can suggest to the user our other options
-        // .NET framework handling (looks similar to above just with suggestion)
-        | Types.Implied Types.FSACTargetRuntime.NET, None, Some _dotnet when Environment.isWin ->
-            clientType <- Types.FSACTargetRuntime.NET
-            suggestNetCore() |> ignore
-            return spawnNetWin ()
-        | Types.Implied Types.FSACTargetRuntime.NET, Some mono, Some _dotnet ->
-            clientType <- Types.FSACTargetRuntime.NET
-            suggestNetCore() |> ignore
-            return spawnNetMono mono
-        | Types.Implied Types.FSACTargetRuntime.NET, None, Some _dotnet ->
-            clientType <- Types.FSACTargetRuntime.NET
-            suggestNetCore() |> ignore
-            return! monoNotFound ()
-
-        // these case actually never happens right now (see the `targetRuntime` calculation above), but it's here for completeness,
-        // IE a scenario in which dotnet isn't found but we have located the proper execution environment for .Net framework
-        | Types.Implied Types.FSACTargetRuntime.NetcoreFdd, None, None when Environment.isWin ->
-            clientType <- Types.FSACTargetRuntime.NetcoreFdd
-            suggestNet () |> ignore
-            return! dotnetNotFound ()
-        | Types.Implied Types.FSACTargetRuntime.NetcoreFdd, Some mono, None when not Environment.isWin ->
-            clientType <- Types.FSACTargetRuntime.NetcoreFdd
-            suggestNet () |> ignore
-            return! dotnetNotFound ()
-
-        | runtime, mono, dotnet ->
-            return failwithf "unsupported combination of runtime/mono/dotnet: %O/%O/%O" runtime mono dotnet
-
+        return spawnNetWin ()
     }
+    let decorate =
+        let decorationType =
+            let opt = createEmpty<DecorationRenderOptions>
+            opt.backgroundColor <- Some (U2.Case1 "green")
+            opt.borderColor <- Some (U2.Case1 "2px solid white")
+            opt
+        window.createTextEditorDecorationType decorationType
 
-    let readyClient (cl: LanguageClient) =
+    let readyClient (ctx : ExtensionContext) (cl: LanguageClient) =
         cl.onReady ()
         |> Promise.onSuccess (fun _ ->
-            cl.onNotification("fsharp/notifyWorkspace", (fun (a: Types.PlainNotification) ->
-                match Notifications.notifyWorkspaceHandler with
-                | None -> ()
-                | Some cb ->
-                    let onMessage res =
-                        match res?Kind |> unbox with
-                        | "project" ->
-                            res |> unbox<ProjectResult> |> deserializeProjectResult |> Choice1Of4 |> cb
-                        | "projectLoading" ->
-                            res |> unbox<ProjectLoadingResult> |> Choice2Of4 |> cb
-                        | "error" ->
-                            res?Data |> parseError |> Choice3Of4 |> cb
-                        | "workspaceLoad" ->
-                            res?Data?Status |> unbox<string> |> Choice4Of4 |> cb
-                        | _ ->
-                            ()
-                    let res = a.content |> ofJson<obj>
-                    onMessage res
-            ))
+            let clearDecorations () =
+                let editor = vscode.window.activeTextEditor
+                // https://github.com/clarkio/vscode-twitch-highlighter/pull/6#issue-235128772
+                editor.setDecorations(decorate, U2.Case1 (ResizeArray())) // л — логика
 
-            cl.onNotification("fsharp/fileParsed", (fun (a: Types.PlainNotification) ->
-                let fn = a.content
-                let te = window.visibleTextEditors |> Seq.find (fun n -> path.normalize(n.document.fileName).ToLower() = path.normalize(fn).ToLower())
+            let disposable =
+                vscode.commands.registerCommand("extension.helloWorld",
+                    fun () ->
+                        let editor = vscode.window.activeTextEditor
 
-                let ev = {Notifications.fileName = a.content; Notifications.version = te.document.version; Notifications.document = te.document }
+                        try
+                            let text = editor.document.getText() // да-да, тупее выдумать не смог
+                            cl.sendRequest("spellcheck/manual", text)
+                            |> Promise.map (fun (res : string) ->
+                                // можно было написать `Promise.map (fun (res : Range ResizeArray) -> ...`,
+                                // но из-за E:\Project\YetAnotherSpellCheckerServer\paket-files\fsharp\FsAutoComplete\src\LanguageServerProtocol\LanguageServerProtocol.fs:2170
+                                // в итоге получаем объект: `{"startColumn":1,"startLine":1,"endColumn":5,"endLine":1}`
+                                // хотя нужно: `{"StartColumn":1,"StartLine":1,"EndColumn":5,"EndLine":1}`
+                                let res : Range ResizeArray = ofJson res
+                                let xs =
+                                    res
+                                    |> Seq.map CodeRange.fromDTO
+                                    |> ResizeArray
+                                editor.setDecorations(decorate, U2.Case1 xs)
+                            )
+                            |> ignore
+                        with e ->
+                            e
+                            |> sprintf "%A\n%A" "editor.document.getText ()"
+                            |> vscode.window.showInformationMessage |> ignore
 
-                Notifications.onDocumentParsedEmitter.fire ev
+                        // try
+                        //     let xmlHttp = Fable.Import.Browser.XMLHttpRequest.Create()
+                        //     let theUrl = "https://google.com"
+                        //     xmlHttp.``open``("GET", theUrl, false)
+                        //     xmlHttp.send ""
+                        //     xmlHttp.responseText
+                        //     |> vscode.window.showInformationMessage
+                        // with e -> e.Message |> vscode.window.showInformationMessage
+                    |> unbox<Func<obj, obj>>
+                )
+            ctx.subscriptions.Add(disposable)
 
-                ()
-            ))
+            vscode.commands.registerCommand("extension.clearDecoration",
+                fun () -> clearDecorations()
+                |> unbox<Func<obj, obj>>
+            )
+            |> ctx.subscriptions.Add
+
+            vscode.window.showInformationMessage "client is ready" |> ignore
+            ()
         )
-
 
     let start (c : ExtensionContext) =
         promise {
-
             let! startOpts = getOptions ()
             let cl = createClient startOpts
             c.subscriptions.Add (cl.start ())
-            let! _ = readyClient cl
+            let! _ = readyClient c cl
             return ()
-
         }
 
     let stop () =
