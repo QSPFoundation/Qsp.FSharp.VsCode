@@ -504,13 +504,14 @@ Consider:
                 "debug" ==> opts
                 ] |> unbox<ServerOptions>
 
-        let fileDeletedWatcher = workspace.createFileSystemWatcher("**/*.{fs,fsx}", true, true, false)
+        let fileDeletedWatcher = workspace.createFileSystemWatcher("*", true, true, false)
 
         let clientOpts =
             let opts = createEmpty<Client.LanguageClientOptions>
             let selector =
                 createObj [
-                    "language" ==> "fsharp"
+                    "scheme" ==> "*"
+                    "language" ==> "*" // "plaintext" // срабатывает
                 ] |> unbox<Client.DocumentSelector>
 
             let initOpts =
@@ -560,53 +561,96 @@ Consider:
     let decorate =
         let decorationType =
             let opt = createEmpty<DecorationRenderOptions>
-            opt.backgroundColor <- Some (U2.Case1 "green")
-            opt.borderColor <- Some (U2.Case1 "2px solid white")
+            // opt.
+            // opt.backgroundColor <- Some (U2.Case1 "green")
+            // opt.borderColor <- Some (U2.Case1 "2px solid white")
+            opt.textDecoration <- Some "underline red"
             opt
         window.createTextEditorDecorationType decorationType
+    let checkSpellAllDocument () =
+        let editor = vscode.window.activeTextEditor
+
+        try
+            let text = editor.document.getText() // да-да, тупее выдумать не смог
+            client
+            |> Option.iter (fun client ->
+                client.sendRequest("spellcheck/manual", text)
+                |> Promise.map (fun (res : string) ->
+                    // можно было написать `Promise.map (fun (res : Range ResizeArray) -> ...`,
+                    // но из-за E:\Project\YetAnotherSpellCheckerServer\paket-files\fsharp\FsAutoComplete\src\LanguageServerProtocol\LanguageServerProtocol.fs:2170
+                    // в итоге получаем объект: `{"startColumn":1,"startLine":1,"endColumn":5,"endLine":1}`
+                    // хотя нужно: `{"StartColumn":1,"StartLine":1,"EndColumn":5,"EndLine":1}`
+                    let res : Range ResizeArray = ofJson res
+                    let xs =
+                        res
+                        |> Seq.map CodeRange.fromDTO
+                        |> ResizeArray
+                    editor.setDecorations(decorate, U2.Case1 xs)
+                )
+                |> ignore
+            )
+        with e ->
+            e
+            |> sprintf "%A\n%A" "editor.document.getText ()"
+            |> vscode.window.showInformationMessage |> ignore
+
 
     let readyClient (ctx : ExtensionContext) (cl: LanguageClient) =
         cl.onReady ()
         |> Promise.onSuccess (fun _ ->
+            cl.onNotification("spellcheck/decorate", fun res ->
+                let editor = vscode.window.activeTextEditor
+                let res : Range ResizeArray = ofJson res
+                let xs =
+                    res
+                    |> Seq.map CodeRange.fromDTO
+                    |> ResizeArray
+                editor.setDecorations(decorate, U2.Case1 xs)
+            )
+            // cl.onNotification("textDocument/publishDiagnostics", fun (a) ->
+            //     printfn "%A" a
+            //     Diagnostic
+            //     // failwith ""
+            // )
+            // cl.onNotification("fsharp/notifyWorkspace", (fun (a: Types.PlainNotification) ->
+            //     match Notifications.notifyWorkspaceHandler with
+            //     | None -> ()
+            //     | Some cb ->
+            //         let onMessage res =
+            //             match res?Kind |> unbox with
+            //             | "project" ->
+            //                 res |> unbox<ProjectResult> |> deserializeProjectResult |> Choice1Of4 |> cb
+            //             | "projectLoading" ->
+            //                 res |> unbox<ProjectLoadingResult> |> Choice2Of4 |> cb
+            //             | "error" ->
+            //                 res?Data |> parseError |> Choice3Of4 |> cb
+            //             | "workspaceLoad" ->
+            //                 res?Data?Status |> unbox<string> |> Choice4Of4 |> cb
+            //             | _ ->
+            //                 ()
+            //         let res = a.content |> ofJson<obj>
+            //         onMessage res
+            // ))
+
+            // cl.onNotification("fsharp/fileParsed", (fun (a: Types.PlainNotification) ->
+            //     let fn = a.content
+            //     let te = window.visibleTextEditors |> Seq.find (fun n -> path.normalize(n.document.fileName).ToLower() = path.normalize(fn).ToLower())
+
+            //     let ev = {Notifications.fileName = a.content; Notifications.version = te.document.version; Notifications.document = te.document }
+
+            //     Notifications.onDocumentParsedEmitter.fire ev
+
+            //     ()
+            // ))
+
             let clearDecorations () =
                 let editor = vscode.window.activeTextEditor
                 // https://github.com/clarkio/vscode-twitch-highlighter/pull/6#issue-235128772
-                editor.setDecorations(decorate, U2.Case1 (ResizeArray())) // л — логика
+                editor.setDecorations(decorate, U2.Case1 (ResizeArray()))
 
             let disposable =
                 vscode.commands.registerCommand("extension.helloWorld",
-                    fun () ->
-                        let editor = vscode.window.activeTextEditor
-
-                        try
-                            let text = editor.document.getText() // да-да, тупее выдумать не смог
-                            cl.sendRequest("spellcheck/manual", text)
-                            |> Promise.map (fun (res : string) ->
-                                // можно было написать `Promise.map (fun (res : Range ResizeArray) -> ...`,
-                                // но из-за E:\Project\YetAnotherSpellCheckerServer\paket-files\fsharp\FsAutoComplete\src\LanguageServerProtocol\LanguageServerProtocol.fs:2170
-                                // в итоге получаем объект: `{"startColumn":1,"startLine":1,"endColumn":5,"endLine":1}`
-                                // хотя нужно: `{"StartColumn":1,"StartLine":1,"EndColumn":5,"EndLine":1}`
-                                let res : Range ResizeArray = ofJson res
-                                let xs =
-                                    res
-                                    |> Seq.map CodeRange.fromDTO
-                                    |> ResizeArray
-                                editor.setDecorations(decorate, U2.Case1 xs)
-                            )
-                            |> ignore
-                        with e ->
-                            e
-                            |> sprintf "%A\n%A" "editor.document.getText ()"
-                            |> vscode.window.showInformationMessage |> ignore
-
-                        // try
-                        //     let xmlHttp = Fable.Import.Browser.XMLHttpRequest.Create()
-                        //     let theUrl = "https://google.com"
-                        //     xmlHttp.``open``("GET", theUrl, false)
-                        //     xmlHttp.send ""
-                        //     xmlHttp.responseText
-                        //     |> vscode.window.showInformationMessage
-                        // with e -> e.Message |> vscode.window.showInformationMessage
+                    checkSpellAllDocument
                     |> unbox<Func<obj, obj>>
                 )
             ctx.subscriptions.Add(disposable)
