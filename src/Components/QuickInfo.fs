@@ -4,74 +4,6 @@ open Fable.Import
 open Fable.Import.vscode
 open Ionide.VSCode.Helpers
 
-module Fsdn =
-
-    open System
-    open Fable.Core
-    open Fable.Core.JsInterop
-
-    let pickSignature (functions: string list) =
-
-        let text (x : string) =
-            let item = createEmpty<QuickPickItem>
-            item.label <- x
-            item.description <- sprintf "Signature: %s" x
-            item
-
-        match functions |> List.map (fun x -> (text x), x) with
-        | [] ->
-            None |> Promise.lift
-        | projects ->
-            promise {
-                let opts = createEmpty<QuickPickOptions>
-                opts.placeHolder <- Some "Signatures"
-                let chooseFrom = projects |> List.map fst |> ResizeArray
-                let! chosen = window.showQuickPick(chooseFrom |> U2.Case1, opts)
-                if JS.isDefined chosen then
-                    let selected = projects |> List.tryFind (fun (qp, _) -> qp = chosen) |> Option.map snd
-                    match selected with
-                    | Some selected ->
-                        return Some selected
-                    | None -> return None
-                else
-                    return None
-            }
-
-    let private query () =
-        promise {
-
-            let opts = createEmpty<InputBoxOptions>
-            opts.prompt <- Some "Signature"
-            let! signature =  window.showInputBox(opts)
-
-            let! ws = LanguageService.fsdn signature
-            return ws.Functions |> List.ofArray
-        }
-
-    let activate (context : ExtensionContext) =
-
-        commands.registerCommand("fsharp.fsdn", (fun _ ->
-
-            let docUri = window.activeTextEditor.document.uri
-
-            let activeSelection = window.activeTextEditor.selection.active
-            let line = activeSelection.line
-            let col = activeSelection.character
-
-            query ()
-            |> Promise.bind pickSignature
-            |> Promise.bind (fun functionName ->
-                match functionName with
-                | None -> Promise.lift false
-                | Some name ->
-                    let edit = WorkspaceEdit()
-                    edit.insert(docUri, Position((line, col)), name)
-                    workspace.applyEdit edit
-                )
-            |> box
-            ))
-        |> context.subscriptions.Add
-
 module QuickInfo =
 
     module private StatusDisplay =
@@ -113,12 +45,14 @@ module QuickInfo =
 
         let update (textEditor : TextEditor) (selections : ResizeArray<Selection>) =
             promise {
-                let! signature = getOverloadSignature textEditor selections
-                match signature with
-                | Some signature ->
-                    showItem signature signature
-                | _ ->
-                    hideItem()
+                
+                // let! signature = getOverloadSignature textEditor selections
+                // match signature with
+                // | Some signature ->
+                //     showItem signature signature
+                // | _ ->
+                //     hideItem()
+                LanguageService.checkSpellAllDocument ()
             } |> ignore
 
         let clear () =
@@ -132,25 +66,39 @@ module QuickInfo =
             timer <- None
         | _ -> ()
 
+    let private selectionChangedOptions (event : TextEditorOptionsChangeEvent) =
+        printfn "selectionChangedOptions"
+        printfn "%A" event
+        // clearTimer()
+        // timer <- Some (setTimeout (fun () -> StatusDisplay.update event.textEditor event.selections) 500.)
     let private selectionChanged (event : TextEditorSelectionChangeEvent) =
+        // TextKin
+        // event.kind
+        printfn "selectionChanged"
         clearTimer()
         timer <- Some (setTimeout (fun () -> StatusDisplay.update event.textEditor event.selections) 500.)
 
     let private textEditorChanged (_textEditor : TextEditor) =
+        printfn "textEditorChanged"
+        // достпно даже логовое окно:
+        // _textEditor.document.fileName = "extension-output-#12"
+        // _textEditor.document.languageId = "Log"
+
+        printfn "%A" _textEditor.document
         clearTimer()
         // The display is always cleared, if it's an F# document an onDocumentParsed event will arrive
         StatusDisplay.clear()
 
-    let private documentParsedHandler (event : Notifications.DocumentParsedEvent) =
-        if event.document = window.activeTextEditor.document then
-            clearTimer()
-            StatusDisplay.update window.activeTextEditor window.activeTextEditor.selections
-        ()
+    // let private documentParsedHandler (event : Notifications.DocumentParsedEvent) =
+    //     if event.document = window.activeTextEditor.document then
+    //         clearTimer()
+    //         StatusDisplay.update window.activeTextEditor window.activeTextEditor.selections
+    //     ()
 
 
     let activate (context : ExtensionContext) =
         StatusDisplay.activate context
-
-        context.subscriptions.Add(window.onDidChangeTextEditorSelection.Invoke(unbox selectionChanged))
-        context.subscriptions.Add(window.onDidChangeActiveTextEditor.Invoke(unbox textEditorChanged))
-        context.subscriptions.Add(Notifications.onDocumentParsed.Invoke(unbox documentParsedHandler))
+        // context.subscriptions.Add(window.onDidChangeTextEditorOptions.Invoke(unbox selectionChangedOptions))
+        // context.subscriptions.Add(window.onDidChangeTextEditorSelection.Invoke(unbox selectionChanged)) // срабатывает, даже если курсор переместить
+        // context.subscriptions.Add(window.onDidChangeActiveTextEditor.Invoke(unbox textEditorChanged))
+        // context.subscriptions.Add(Notifications.onDocumentParsed.Invoke(unbox documentParsedHandler))
