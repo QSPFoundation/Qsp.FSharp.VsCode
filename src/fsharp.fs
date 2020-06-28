@@ -13,6 +13,8 @@ open Fable.Import.vscode
 let activate (context : vscode.ExtensionContext) =
     LanguageService.start context
     |> Promise.catch (fun error -> promise { () }) // prevent unhandled rejected promises
-
+    |> Promise.map (fun () ->
+        QuickInfo.activate context
+    )
 let deactivate(disposables : vscode.Disposable[]) =
     LanguageService.stop ()
