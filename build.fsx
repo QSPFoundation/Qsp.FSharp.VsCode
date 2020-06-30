@@ -85,10 +85,7 @@ let copyGrammar fsgrammarDir fsgrammarRelease =
     Directory.ensure fsgrammarRelease
     Shell.cleanDir fsgrammarRelease
     Shell.copyFiles fsgrammarRelease [
-        fsgrammarDir </> "fsharp.fsi.json"
-        fsgrammarDir </> "fsharp.fsl.json"
-        fsgrammarDir </> "fsharp.fsx.json"
-        fsgrammarDir </> "fsharp.json"
+        fsgrammarDir </> "qsp.json"
     ]
 
 let copySchemas fsschemaDir fsschemaRelease =
@@ -294,11 +291,11 @@ Target.create "BuildPackages" ignore
 "YarnInstall" ==> "Build"
 "DotNetRestore" ==> "Build"
 
-"Build"
+"Default" // TODO: "Build"
 ==> "SetVersion"
 ==> "BuildPackage"
-==> "ReleaseGitHub"
-==> "PublishToGallery"
+// ==> "ReleaseGitHub"
+// ==> "PublishToGallery"
 ==> "Release"
 
 Target.runOrDefault "Default"

@@ -511,7 +511,7 @@ Consider:
             let selector =
                 createObj [
                     "scheme" ==> "*"
-                    "language" ==> "*" // "plaintext" // срабатывает
+                    "language" ==> "qsp"
                 ] |> unbox<Client.DocumentSelector>
 
             let initOpts =
@@ -532,7 +532,7 @@ Consider:
 
             opts
 
-        let cl = LanguageClient("FSharp", "F#", options, clientOpts, false)
+        let cl = LanguageClient("FSharp", "QSP", options, clientOpts, false)
         client <- Some cl
         cl
 
