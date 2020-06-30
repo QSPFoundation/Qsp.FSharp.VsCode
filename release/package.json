@@ -1,14 +1,13 @@
 {
-	"name": "yet-another-spell-checker",
-	"version": "4.14.0",
-	"publisher": "Ionide",
+	"name": "qsp",
+	"version": "0.0.1",
+	"publisher": "Home",
 	"contributors": [
 		{
-			"name": "Krzysztof Cieślak",
-			"url": "https://twitter.com/k_cieslak"
+			"name": "Fering"
 		}
 	],
-	"description": "F# Language Support",
+	"description": "QSP Language Support",
 	"preview": false,
 	"categories": [
 		"Linters",
@@ -16,27 +15,15 @@
 		"Snippets"
 	],
 	"license": "SEE LICENSE IN LICENSE.md",
-	"icon": "images/logo.png",
+	
 	"bugs": {
-		"url": "https://github.com/ionide/ionide-vscode-fsharp/issues"
+		
 	},
-	"homepage": "http://ionide.io",
+	"homepage": "TODO",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/ionide/ionide-vscode-fsharp.git"
+		"url": "TODO"
 	},
-	"badges": [
-		{
-			"description": "Open Collective Backers",
-			"url": "https://img.shields.io/opencollective/backers/ionide.svg?color=blue&style=for-the-badge",
-			"href": "https://opencollective.com/ionide"
-		},
-		{
-			"description": "Open Collective Sponsors",
-			"url": "https://img.shields.io/opencollective/sponsors/ionide.svg?color=Blue&style=for-the-badge",
-			"href": "https://opencollective.com/ionide"
-		}
-	],
 	"engines": {
 		"vscode": "^0.10.0"
 	},
@@ -44,16 +31,13 @@
 	"contributes": {
 		"languages": [
 			{
-				"id": "fsharp",
+				"id": "qsp",
 				"aliases": [
-					"F#",
-					"FSharp",
-					"fsharp"
+					"QSP",
+					"qsp"
 				],
 				"extensions": [
-					".fs",
-					".fsx",
-					".fsi"
+					".qsps"
 				],
 				"configuration": "./language-configuration.json"
 			}
@@ -61,23 +45,8 @@
 		"grammars": [
 			{
 				"language": "fsharp",
-				"scopeName": "source.fsharp",
-				"path": "./syntaxes/fsharp.json"
-			},
-			{
-				"language": "fsharp",
-				"scopeName": "source.fsharp.fsx",
-				"path": "./syntaxes/fsharp.fsx.json"
-			},
-			{
-				"language": "fsharp",
-				"scopeName": "source.fsharp.fsi",
-				"path": "./syntaxes/fsharp.fsi.json"
-			},
-			{
-				"language": "fsharp",
-				"scopeName": "source.fsharp.fsl",
-				"path": "./syntaxes/fsharp.fsl.json"
+				"scopeName": "source.qsp",
+				"path": "./syntaxes/qsp.json"
 			}
 		],
 		"commands": [
@@ -90,110 +59,20 @@
 				"title": "Clear decoration"
 			}
 		],
-		"viewsContainers": {
-
-		},
-		"views": {
-		},
-		"menus": {
-			"commandPalette": [
-				{
-					"command": "fsi.SendLine",
-					"when": "editorLangId == 'fsharp'"
-				},
-				{
-					"command": "fsharp.scriptrunner.run",
-					"when": "editorLangId == 'fsharp' && resourceExtname == '.fsx'"
-				}
-			],
-			"view/item/context": [
-			],
-			"editor/context": [
-				{
-					"command": "fsharp.generateDoc",
-					"group": "1_modification",
-					"when": "editorTextFocus && editorLangId == 'fsharp'"
-				}
-			],
-			"editor/title": [
-				{
-					"command": "fsi.SendFile",
-					"when": "editorLangId == 'fsharp' && resourceExtname == '.fsx'",
-					"group": "navigation"
-				}
-			],
-			"touchBar": [
-				{
-					"command": "fsi.SendFile",
-					"group": "fsharp",
-					"when": "editorLangId == 'fsharp' && config.FSharp.enableTouchBar"
-				}
-			]
-		},
-		"keybindings": [
-			{
-				"command": "fsi.SendLine",
-				"key": "alt+/",
-				"mac": "alt+/",
-				"when": "editorFocus && !findWidgetVisible && editorLangId == 'fsharp'"
-			},
-			{
-				"command": "fsi.SendSelection",
-				"key": "alt+Enter",
-				"mac": "alt+Enter",
-				"when": "editorFocus && !findWidgetVisible && editorLangId == 'fsharp'"
-			},
-			{
-				"command": "fsharp.generateDoc",
-				"key": "alt+shift+j",
-				"when": "editorFocus && editorLangId == 'fsharp'"
-			},
-			{
-				"command": "fsharp.getHelp",
-				"key": "shift+F1",
-				"when": "editorFocus && editorLangId == 'fsharp'"
-			},
-			{
-				"command": "MSBuild.buildCurrent",
-				"key": "ctrl+alt+b",
-				"when": "editorFocus && editorLangId == 'fsharp'"
-			},
-			{
-				"command": "MSBuild.buildCurrentSolution",
-				"key": "ctrl+alt+shift+b",
-				"when": "fsharp.project.any"
-			},
-			{
-				"command": "fsharp.openInfoPanel",
-				"key": "alt+,",
-				"when": "editorFocus && editorLangId == 'fsharp'"
-			},
-			{
-				"command": "fsharp.updateInfoPanel",
-				"key": "alt+.",
-				"when": "editorFocus && editorLangId == 'fsharp'"
-			}
-		],
-		"configurationDefaults": {
-			"[fsharp]": {
-				"editor.useTabStops": false
-			}
-
-		},
 		"semanticTokenScopes": [
 			{
-				"language": "fsharp",
+				"language": "qsp",
 				"scopes": {
-					"mutable": ["variable.fsharp.mutable"],
-					"disposable": ["variable.fsharp.mutable"],
-					"operator": ["keyword.symbol.fsharp"],
-					"cexpr": ["keyword.control.fsharp"]
+					"mutable": ["variable.qsp.mutable"],
+					"disposable": ["variable.qsp.mutable"],
+					"operator": ["keyword.symbol.qsp"],
+					"cexpr": ["keyword.control.qsp"]
 				}
 			}
 		],
 		"configuration": {
 			"type": "object",
-			"title": "F#",
+			"title": "QSP",
 			"properties": {
 				"FSharp.fsiSendConfiguration": {
 					"type": "string",
@@ -201,79 +80,9 @@
 					"description": "By default `{\"Wait\":50.0,\"CharsBySize\":1000}`"
 				}
 			}
-		},
-		"jsonValidation": [
-			{
-				"fileMatch": "fableconfig.json",
-				"url": "./schemas/fableconfig.json"
-			},
-			{
-				"fileMatch": "wsconfig.json",
-				"url": "./schemas/wsconfig.json"
-			}
-		],
-		"breakpoints": [
-			{
-				"language": "fsharp"
-			}
-		],
-		"problemMatchers": [
-			{
-				"name": "fable-webpack",
-				"owner": "fsharp",
-				"fileLocation": "absolute",
-				"background": {
-					"activeOnStart": true,
-					"beginsPattern": {
-						"regexp": "webpack: Compiling"
-					},
-					"endsPattern": {
-						"regexp": "webpack: (Compiled successfully|Failed to compile)"
-					}
-				},
-				"pattern": {
-					"regexp": "(.*)\\((\\d+),(\\d+),(\\d+),(\\d+)\\)\\s*:\\s*(warning|error) FABLE\\s*:\\s*(.*)$",
-					"file": 1,
-					"line": 2,
-					"column": 3,
-					"endLine": 4,
-					"endColumn": 5,
-					"severity": 6,
-					"message": 7
-				}
-			}
-		],
-		"colors": [
-			{
-				"id": "fsharp.linelens",
-				"description": "Foreground color for F# LineLenses",
-				"defaults": {
-					"dark": "#696969",
-					"light": "#919191",
-					"highContrast": "#A2E2A2"
-				}
-			},
-			{
-				"id": "fsharp.statusBarWarnings",
-				"description": "Text colors for warnings shown in the status bar",
-				"defaults": {
-					"dark": "#FFCC00",
-					"light": "#FFCC00",
-					"highContrast": "#FFFF00"
-				}
-			}
-		]
+		}
 	},
 	"activationEvents": [
-		
 		"onStartupFinished"
-	],
-	"extensionDependencies": [
-		"ms-dotnettools.csharp"
-	],
-	"__metadata": {
-		"id": "0ea05e3f-5a38-419d-8305-f6c3f6d409d2",
-		"publisherDisplayName": "Ionide",
-		"publisherId": "6841d314-11e9-4ec1-a088-08558c6effee"
-	}
+	]
 }
