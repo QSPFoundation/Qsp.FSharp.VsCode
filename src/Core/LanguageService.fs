@@ -504,13 +504,12 @@ Consider:
                 "debug" ==> opts
                 ] |> unbox<ServerOptions>
 
-        let fileDeletedWatcher = workspace.createFileSystemWatcher("*", true, true, false)
+        let fileDeletedWatcher = workspace.createFileSystemWatcher("**/*.{qsps,qproj}", false, false, false)
 
         let clientOpts =
             let opts = createEmpty<Client.LanguageClientOptions>
             let selector =
                 createObj [
-                    "scheme" ==> "*"
                     "language" ==> "qsp"
                 ] |> unbox<Client.DocumentSelector>
 
@@ -520,7 +519,7 @@ Consider:
                 ]
 
             let synch = createEmpty<Client.SynchronizeOptions>
-            synch.configurationSection <- Some !^"FSharp"
+            synch.configurationSection <- Some !^"Qsp"
             synch.fileEvents <- Some( !^ ResizeArray([fileDeletedWatcher]))
 
             opts.documentSelector <- Some !^selector
@@ -532,19 +531,19 @@ Consider:
 
             opts
 
-        let cl = LanguageClient("FSharp", "QSP", options, clientOpts, false)
+        let cl = LanguageClient("qsp", "QSP", options, clientOpts, false)
         client <- Some cl
         cl
 
     let getOptions () = promise {
         let spawnNetWin () =
             let fsautocompletePath =
+                // @"E:\Project\Qsp\QspVscodeExtension\release\bin\QspServer.exe"
+                VSCodeExtension.ionidePluginPath () + @"/bin/QspServer.exe"
+                
                 // if String.IsNullOrEmpty fsacNetPath then
-                // VSCodeExtension.ionidePluginPath () + "/bin/YacsServer.exe"
-                // "file:///E:/Project/YetAnotherSpellCheckerServer/YacsServer/bin/Debug/net461/YacsServer.exe"
-                "E:/Project/YetAnotherSpellCheckerServer/YacsServer/bin/Debug/net461/YacsServer.exe"
-                // else fsacNetPath
-            printfn "FSAC (NET): '%s'" fsautocompletePath
+
+            // printfn "FSAC (NET): '%s'" fsautocompletePath
             let args =
                 [
                     // if backgroundSymbolCache then yield "--background-service-enabled"
@@ -661,7 +660,7 @@ Consider:
             )
             |> ctx.subscriptions.Add
 
-            vscode.window.showInformationMessage "client is ready" |> ignore
+            // vscode.window.showInformationMessage "client is ready" |> ignore
             ()
         )
 

@@ -315,24 +315,11 @@ type ShowStatus private (panel : WebviewPanel, body : string) as this =
 [<RequireQualifiedAccess>]
 module VSCodeExtension =
 
-    let private extensionName =
-#if IONIDE_EXPERIMENTAL
-        "experimental-fsharp"
-#else
-        "ionide-fsharp"
-#endif
+    let private extensionName = "qsp"
 
     let ionidePluginPath () =
-
-        let capitalize (s: string) =
-            sprintf "%c%s" (s.[0] |> Char.ToUpper) (s.Substring(1))
-
-        let oldExtensionName = capitalize extensionName
-
-        try
-            (VSCode.getPluginPath (sprintf "Ionide.%s" extensionName))
-        with
-        | _ -> (VSCode.getPluginPath (sprintf "Ionide.%s" oldExtensionName))
+        // TODO: or `feringcorp`?
+        VSCode.getPluginPath (sprintf "Fering.%s" extensionName)
 
     let workbenchViewId () =
         sprintf "workbench.view.extension.%s" extensionName

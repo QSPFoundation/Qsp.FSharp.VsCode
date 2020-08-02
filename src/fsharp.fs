@@ -15,6 +15,8 @@ let activate (context : vscode.ExtensionContext) =
     |> Promise.catch (fun error -> promise { () }) // prevent unhandled rejected promises
     |> Promise.map (fun () ->
         QuickInfo.activate context
+        HighlightingProvider.activate context
+        Project.activate context
     )
 let deactivate(disposables : vscode.Disposable[]) =
     LanguageService.stop ()

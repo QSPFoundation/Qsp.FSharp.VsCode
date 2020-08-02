@@ -1,7 +1,7 @@
 {
 	"name": "qsp",
 	"version": "0.0.1",
-	"publisher": "Home",
+	"publisher": "Fering",
 	"contributors": [
 		{
 			"name": "Fering"
@@ -14,15 +14,13 @@
 		"Programming Languages",
 		"Snippets"
 	],
-	"license": "SEE LICENSE IN LICENSE.md",
-	
+    "license": "SEE LICENSE IN LICENSE.md",
+    "icon": "icon.png",
 	"bugs": {
-		
 	},
-	"homepage": "TODO",
 	"repository": {
 		"type": "git",
-		"url": "TODO"
+		"url": "https://github.com/gretmn102/QSP-VSCode"
 	},
 	"engines": {
 		"vscode": "^0.10.0"
@@ -41,14 +39,44 @@
 				],
 				"configuration": "./language-configuration.json"
 			}
-		],
+        ],
+        "iconThemes": [
+            {
+                "id": "qsp",
+                "label": "QSP Icon Theme",
+                "path": "./fileicons/qsp-icon-theme.json"
+            }
+        ],
 		"grammars": [
 			{
-				"language": "fsharp",
+				"language": "qsp",
 				"scopeName": "source.qsp",
 				"path": "./syntaxes/qsp.json"
 			}
-		],
+        ],
+        "debuggers": [
+            {
+                "type": "qsp",
+				"label": "Quest Soft Player",
+				"languages": [
+					"qsp"
+                ],
+                "configurationAttributes": {
+                    "launch": {
+						"required": [
+							"program"
+                        ],
+                        "properties": {
+							"program": {
+								"type": "string",
+								"description": "Absolute path to a .qsps file.",
+								"default": "${file}"
+							}
+                        }
+                    }
+                }
+            }
+        ],
 		"commands": [
 			{
 				"command": "extension.helloWorld",
@@ -63,21 +91,34 @@
 			{
 				"language": "qsp",
 				"scopes": {
-					"mutable": ["variable.qsp.mutable"],
-					"disposable": ["variable.qsp.mutable"],
-					"operator": ["keyword.symbol.qsp"],
-					"cexpr": ["keyword.control.qsp"]
+					"storage": ["storage.type.js"],
+					"procedure": ["keyword.symbol.qsp"],
+                    "keywordControl": ["keyword.control.qsp"],
+                    "operatorArithmetic": ["keyword.operator.arithmetic.qsp"],
+                    "operatorAssignment": ["keyword.operator.assignment.qsp"],
+                    "operatorComparison": ["keyword.operator.comparison.qsp"],
+                    "operatorRelational": ["keyword.operator.relational.qsp"],
+                    "punctuationTerminatorStatement": ["punctuation.terminator.statement.qsp"],
+                    "punctuationSeparatorColon": ["punctuation.separator.colon"],
+                    "interpolationBegin": ["punctuation.definition.template-expression.begin.qsp"],
+                    "interpolationEnd": ["punctuation.definition.template-expression.end.qsp"],
+                    "constantNumericInteger": ["constant.numeric.integer.nativeint.qsp"]
 				}
 			}
 		],
 		"configuration": {
 			"type": "object",
-			"title": "QSP",
+			"title": "QSP configuration",
 			"properties": {
-				"FSharp.fsiSendConfiguration": {
-					"type": "string",
-					"default": "{\"Wait\":50.0,\"CharsBySize\":1000}",
-					"description": "By default `{\"Wait\":50.0,\"CharsBySize\":1000}`"
+				"Qsp.FormatConfig.IsSplitStringPl": {
+					"type": "boolean",
+					"default": false,
+					"description": "Разделяет одинокие строки. Например,\n```qsp\n'вот\nэто'\n```\nпреобразуется в:\n```qsp\n'вот'\n'это'\n```"
+				},
+				"Qsp.FormatConfig.TrimWhitespaceWhenSplit": {
+					"type": "boolean",
+					"default": false,
+					"description": "Если `Format.IsSplitStringPl = true`, то удаляет с обеих сторон пробельные символы. Например,\n```qsp\n'вот\n\tэто\nи\n это'\n```\nпреобразуется в:\n```qsp\n'вот'\n'это'\n'и'\n'это'\n```"
 				}
 			}
 		}
