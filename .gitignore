@@ -78,3 +78,8 @@ funcs.txt
 types.txt
 .ionide
 .fake
+
+/start.bat
+/release/LICENSE.md
+/release/README.md
+/release/CHANGELOG.md

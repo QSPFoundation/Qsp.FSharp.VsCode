@@ -24,13 +24,13 @@ open Fake.Api
 
 // Git configuration (used for publishing documentation in gh-pages branch)
 // The profile where the project is posted
-let gitOwner = "ionide"
+let gitOwner = "gretmn102"
 let gitHome = "https://github.com/" + gitOwner
 
 // The name of the project on GitHub
-let gitName = "ionide-vscode-fsharp"
+let gitName = "QSP-VSCode"
 
-let fsacDir = "paket-files/github.com/fsharp/FsAutoComplete"
+let fsacDir = "paket-files/github.com/gretmn102/FParserQSP/QspServer" // \bin\Debug\net461\QspServer.exe
 
 // Read additional information from the release notes document
 let releaseNotesData =
@@ -202,23 +202,9 @@ Target.create "RunScript" (fun _ ->
 )
 
 Target.create "CopyFSAC" (fun _ ->
-    let fsacBin = sprintf "%s/bin/release" fsacDir
+    let fsacBin = sprintf "%s/bin/Debug/net461" fsacDir
     let releaseBin = "release/bin"
     copyFSAC releaseBin fsacBin
-)
-
-Target.create "CopyFSACNetcore" (fun _ ->
-    let fsacBinNetcore = sprintf "%s/bin/release_netcore" fsacDir
-    let releaseBinNetcore = "release/bin_netcore"
-
-    copyFSACNetcore releaseBinNetcore fsacBinNetcore
-)
-
-Target.create "CopyForge" (fun _ ->
-    let forgeDir = "paket-files/github.com/ionide/Forge"
-    let releaseForge = "release/bin_forge"
-
-    copyForge forgeDir releaseForge
 )
 
 Target.create "CopyGrammar" (fun _ ->
@@ -280,11 +266,9 @@ Target.create "BuildPackages" ignore
 ==> "RunScript"
 ==> "CopyDocs"
 ==> "CopyFSAC"
-==> "CopyFSACNetcore"
-==> "CopyForge"
-==> "CopyGrammar"
-==> "CopySchemas"
-==> "CopyLib"
+// ==> "CopyGrammar"
+// ==> "CopySchemas"
+// ==> "CopyLib"
 ==> "Build"
 
 
@@ -294,8 +278,8 @@ Target.create "BuildPackages" ignore
 "Default" // TODO: "Build"
 ==> "SetVersion"
 ==> "BuildPackage"
-// ==> "ReleaseGitHub"
-// ==> "PublishToGallery"
+==> "ReleaseGitHub"
+==> "PublishToGallery"
 ==> "Release"
 
-Target.runOrDefault "Default"
+Target.runOrDefault "Build"
