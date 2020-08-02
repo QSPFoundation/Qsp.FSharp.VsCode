@@ -678,33 +678,38 @@ module Project =
 
     let activate (context : ExtensionContext) =
         CurrentWorkspaceConfiguration.setContext context
-        commands.registerCommand("fsharp.clearCache", clearCache |> unbox<Func<obj,obj>> )
-        |> context.subscriptions.Add
+        // commands.registerCommand("fsharp.clearCache", clearCache |> unbox<Func<obj,obj>> )
+        // |> context.subscriptions.Add
 
-        Notifications.notifyWorkspaceHandler <- Some handleProjectParsedNotification
-        workspaceNotificationAvaiable <- true
-        ProjectStatus.item <- Some (window.createStatusBarItem (StatusBarAlignment.Right, 9000. ))
-        statusUpdated.Invoke(!!ProjectStatus.statusUpdateHandler) |> context.subscriptions.Add
+        // Notifications.notifyWorkspaceHandler <- Some handleProjectParsedNotification
+        // workspaceNotificationAvaiable <- true
+        // ProjectStatus.item <- Some (window.createStatusBarItem (StatusBarAlignment.Right, 9000. ))
+        // statusUpdated.Invoke(!!ProjectStatus.statusUpdateHandler) |> context.subscriptions.Add
 
-        commands.registerCommand("fsharp.changeWorkspace", (fun _ ->
-            workspacePeek ()
-            |> Promise.bind (fun x -> pickFSACWorkspace x (CurrentWorkspaceConfiguration.get()))
-            |> Promise.bind (function Some w -> initWorkspaceHelper w  | None -> Promise.empty )
-            |> box
-            ))
-        |> context.subscriptions.Add
+        // commands.registerCommand("fsharp.changeWorkspace", (fun _ ->
+        //     workspacePeek ()
+        //     |> Promise.bind (fun x -> pickFSACWorkspace x (CurrentWorkspaceConfiguration.get()))
+        //     |> Promise.bind (function Some w -> initWorkspaceHelper w  | None -> Promise.empty )
+        //     |> box
+        //     ))
+        // |> context.subscriptions.Add
 
-        commands.registerCommand("showProjStatusFromIndicator", (fun _ ->
-            let name = path.basename (ProjectStatus.path)
-            ShowStatus.CreateOrShow(ProjectStatus.path,name)
-            |> box
-        )) |> context.subscriptions.Add
+        // commands.registerCommand("showProjStatusFromIndicator", (fun _ ->
+        //     let name = path.basename (ProjectStatus.path)
+        //     ShowStatus.CreateOrShow(ProjectStatus.path,name)
+        //     |> box
+        // )) |> context.subscriptions.Add
 
-        initWorkspace ()
-        |> Promise.onSuccess (fun _ ->
-            setTimeout (fun _ ->
-                getNotLoaded ()
-                |> List.iter (fun n -> load false n |> ignore)
-            ) 1000.
-            |> ignore
-        )
+        if isNull vscode.workspace.rootPath then []
+        else
+            [vscode.workspace.rootPath]
+        |> LanguageService.workspaceLoad
+        
+        // initWorkspace ()
+        // |> Promise.onSuccess (fun _ ->
+        //     setTimeout (fun _ ->
+        //         getNotLoaded ()
+        //         |> List.iter (fun n -> load false n |> ignore)
+        //     ) 1000.
+        //     |> ignore
+        // )

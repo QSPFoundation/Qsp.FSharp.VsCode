@@ -563,34 +563,22 @@ NUGET
       Fable.Core (>= 1.3.17) - restriction: >= netstandard2.0
       FSharp.Core (>= 4.3.4) - restriction: >= netstandard2.0
 GIT
-  remote: https://github.com/fsharp/FsAutoComplete.git
-     (a3ebdc8c88600117d271c833ae31ab58c38e2ce9)
+  remote: https://github.com/gretmn102/FParserQSP
+     (ea8cbcd855c0482d942d0568d2445dc77e997491)
       build: build.cmd
       os: win
-     (a3ebdc8c88600117d271c833ae31ab58c38e2ce9)
+     (ea8cbcd855c0482d942d0568d2445dc77e997491)
       build: build.sh
       os: linux
-     (a3ebdc8c88600117d271c833ae31ab58c38e2ce9)
+     (ea8cbcd855c0482d942d0568d2445dc77e997491)
       build: build.sh
       os: osx
-  remote: https://github.com/ionide/Forge.git
-     (22e1f197ea0081f401f3539d50d487fe98dfc026)
-      build: build.cmd
-      os: win
-     (22e1f197ea0081f401f3539d50d487fe98dfc026)
-      build: build.cmd
-      os: linux
-     (22e1f197ea0081f401f3539d50d487fe98dfc026)
-      build: build.sh
-      os: osx
-  remote: https://github.com/ionide/ionide-fsgrammar.git
-     (af037b23ca4c61b02799957a61cbd05b44355caf)
 GITHUB
   remote: ionide/ionide-vscode-helpers
-    src/Fable.Import.Showdown.fs (548cbeabd39efaf622588f057b11a0ce21329080)
-    src/Fable.Import.VSCode.fs (548cbeabd39efaf622588f057b11a0ce21329080)
-    src/Fable.Import.VSCode.LanguageServer.fs (548cbeabd39efaf622588f057b11a0ce21329080)
-    src/Helpers.fs (548cbeabd39efaf622588f057b11a0ce21329080)
+    src/Fable.Import.Showdown.fs (5e4c28c79ed565497cd481fac2f22ee2d8d28406)
+    src/Fable.Import.VSCode.fs (5e4c28c79ed565497cd481fac2f22ee2d8d28406)
+    src/Fable.Import.VSCode.LanguageServer.fs (5e4c28c79ed565497cd481fac2f22ee2d8d28406)
+    src/Helpers.fs (5e4c28c79ed565497cd481fac2f22ee2d8d28406)
 GROUP build
 NUGET
   remote: https://api.nuget.org/v3/index.json
