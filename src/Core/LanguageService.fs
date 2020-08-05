@@ -565,14 +565,14 @@ Consider:
             opt
         window.createTextEditorDecorationType decorationType
 
-    let buildQsp () =
+    let buildQspGen cmd =
         let editor = vscode.window.activeTextEditor
         editor.document.save()
         |> Promise.bind (fun isSaved ->
             if isSaved then
                 client
                 |> Option.map (fun client ->
-                    client.sendRequest("qsp/build", editor.document.uri.fsPath)
+                    client.sendRequest(cmd, editor.document.uri.fsPath)
                     |> Promise.bind (fun res ->
                         // Ну и зачем так делать? Не проще ли было сделать какой-нибудь преобразователь с Newtonsoft.Json в Fable.Core.JsInterop и обратно? Идиотизм какой-то.
                         let case : string = res?case |> unbox
@@ -592,6 +592,9 @@ Consider:
             else
                 Promise.empty
         )
+
+    let buildQsp () = buildQspGen "qsp/build"
+    let buildQspAndRun () = buildQspGen "qsp/buildAndRun"
 
     let readyClient (ctx : ExtensionContext) (cl: LanguageClient) =
         cl.onReady ()
@@ -649,6 +652,12 @@ Consider:
             let disposable =
                 vscode.commands.registerCommand("extension.build",
                     buildQsp
+                    |> unbox<Func<obj, obj>>
+                )
+            ctx.subscriptions.Add(disposable)
+            let disposable =
+                vscode.commands.registerCommand("extension.buildAndRun",
+                    buildQspAndRun
                     |> unbox<Func<obj, obj>>
                 )
             ctx.subscriptions.Add(disposable)
