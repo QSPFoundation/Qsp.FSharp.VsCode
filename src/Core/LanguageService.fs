@@ -540,8 +540,6 @@ Consider:
             let fsautocompletePath =
                 // @"E:\Project\Qsp\QspVscodeExtension\release\bin\QspServer.exe"
                 VSCodeExtension.ionidePluginPath () + @"/bin/QspServer.exe"
-                
-                // if String.IsNullOrEmpty fsacNetPath then
 
             // printfn "FSAC (NET): '%s'" fsautocompletePath
             let args =
@@ -566,33 +564,34 @@ Consider:
             opt.textDecoration <- Some "underline red"
             opt
         window.createTextEditorDecorationType decorationType
-    let checkSpellAllDocument () =
+
+    let buildQsp () =
         let editor = vscode.window.activeTextEditor
+        editor.document.save()
+        |> Promise.bind (fun isSaved ->
+            if isSaved then
+                client
+                |> Option.map (fun client ->
+                    client.sendRequest("qsp/build", editor.document.uri.fsPath)
+                    |> Promise.bind (fun res ->
+                        // Ну и зачем так делать? Не проще ли было сделать какой-нибудь преобразователь с Newtonsoft.Json в Fable.Core.JsInterop и обратно? Идиотизм какой-то.
+                        let case : string = res?case |> unbox
+                        let fields : string [] = res?fields |> unbox
 
-        try
-            let text = editor.document.getText() // да-да, тупее выдумать не смог
-            client
-            |> Option.iter (fun client ->
-                client.sendRequest("spellcheck/manual", text)
-                |> Promise.map (fun (res : string) ->
-                    // можно было написать `Promise.map (fun (res : Range ResizeArray) -> ...`,
-                    // но из-за E:\Project\YetAnotherSpellCheckerServer\paket-files\fsharp\FsAutoComplete\src\LanguageServerProtocol\LanguageServerProtocol.fs:2170
-                    // в итоге получаем объект: `{"startColumn":1,"startLine":1,"endColumn":5,"endLine":1}`
-                    // хотя нужно: `{"StartColumn":1,"StartLine":1,"EndColumn":5,"EndLine":1}`
-                    let res : Range ResizeArray = ofJson res
-                    let xs =
-                        res
-                        |> Seq.map CodeRange.fromDTO
-                        |> ResizeArray
-                    editor.setDecorations(decorate, U2.Case1 xs)
+                        match case with
+                        | "Choice1Of2" ->
+                            vscode.window.showErrorMessage fields.[0]
+                        | "Choice2Of2" ->
+                            // vscode.window.showInformationMessage fields.[0]
+                            Promise.empty
+                        | _ ->
+                            Promise.empty
+                    )
                 )
-                |> ignore
-            )
-        with e ->
-            e
-            |> sprintf "%A\n%A" "editor.document.getText ()"
-            |> vscode.window.showInformationMessage |> ignore
-
+                |> Option.defaultValue Promise.empty
+            else
+                Promise.empty
+        )
 
     let readyClient (ctx : ExtensionContext) (cl: LanguageClient) =
         cl.onReady ()
@@ -648,17 +647,11 @@ Consider:
                 editor.setDecorations(decorate, U2.Case1 (ResizeArray()))
 
             let disposable =
-                vscode.commands.registerCommand("extension.helloWorld",
-                    checkSpellAllDocument
+                vscode.commands.registerCommand("extension.build",
+                    buildQsp
                     |> unbox<Func<obj, obj>>
                 )
             ctx.subscriptions.Add(disposable)
-
-            vscode.commands.registerCommand("extension.clearDecoration",
-                fun () -> clearDecorations()
-                |> unbox<Func<obj, obj>>
-            )
-            |> ctx.subscriptions.Add
 
             // vscode.window.showInformationMessage "client is ready" |> ignore
             ()

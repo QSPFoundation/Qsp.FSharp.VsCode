@@ -1,6 +1,6 @@
 {
 	"name": "qsp",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "Fering",
 	"contributors": [
 		{
@@ -79,12 +79,8 @@
         ],
 		"commands": [
 			{
-				"command": "extension.helloWorld",
-				"title": "SpellCheck"
-			},
-			{
-				"command": "extension.clearDecoration",
-				"title": "Clear decoration"
+				"command": "extension.build",
+				"title": "QSP: Build"
 			}
 		],
 		"semanticTokenScopes": [

@@ -52,7 +52,7 @@ module QuickInfo =
                 //     showItem signature signature
                 // | _ ->
                 //     hideItem()
-                LanguageService.checkSpellAllDocument ()
+                ()
             } |> ignore
 
         let clear () =
