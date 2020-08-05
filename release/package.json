@@ -81,6 +81,10 @@
 			{
 				"command": "extension.build",
 				"title": "QSP: Build"
+			},
+			{
+				"command": "extension.buildAndRun",
+				"title": "QSP: Build and run"
 			}
 		],
 		"semanticTokenScopes": [
