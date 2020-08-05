@@ -1,4 +1,4 @@
-# Quest Soft Player (QSP) provider
+# Quest Soft Player (QSP) language provider
 
 ## Зочем?
 — А-а, зачем мне эта ерунда, если уже есть [QGen](http://qsp.su/index.php?option=com_content&task=view&id=46&Itemid=56)?! Обчитаются своих книжечек, а потом в гаражах кодють! Такую страну про...
@@ -20,6 +20,9 @@
 * Искать определения переменных/локации и их использование (F12)
 
     ![](Images/definitions.gif?raw=true)
+* Форматировать убогий код
+
+    ![](Images/format.gif?raw=true)
 * Дико тормозить на больших файлах... к сожалению.
 
 ## Щито оно **не** умеет, но могло бы
