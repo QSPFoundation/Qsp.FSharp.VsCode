@@ -536,24 +536,49 @@ Consider:
         cl
 
     let getOptions () = promise {
-        let spawnNetWin () =
-            let fsautocompletePath =
-                // @"E:\Project\Qsp\QspVscodeExtension\release\bin\QspServer.exe"
-                VSCodeExtension.ionidePluginPath () + @"/bin/QspServer.exe"
+        let dotnetNotFound () = promise {
+            let msg = """
+            Cannot start QSP language services because `dotnet` was not found.
+            """
+            let! result = vscode.window.showErrorMessage(msg)
 
-            // printfn "FSAC (NET): '%s'" fsautocompletePath
+            return failwith "no `dotnet` binary found"
+        }
+        if Environment.isWin then
+            let fsautocompletePath =
+                VSCodeExtension.ionidePluginPath () + @"/bin/QspServer.exe"
+            printfn "%A" fsautocompletePath
             let args =
                 [
                     // if backgroundSymbolCache then yield "--background-service-enabled"
                     // if verbose then yield  "--verbose"
                 ] |> ResizeArray
+            let spawnNetWin =
+                createObj [
+                    "command" ==> fsautocompletePath
+                    "args" ==> args
+                    "transport" ==> 0
+                ]
+            return spawnNetWin
+        else
+            let spawnServer dotnet =
+                let fsautocompletePath =
+                    [
+                        VSCodeExtension.ionidePluginPath () + "/bin/qspserver.dll"
+                    ] |> ResizeArray
 
-            createObj [
-                "command" ==> fsautocompletePath
-                "args" ==> args
-                "transport" ==> 0
-            ]
-        return spawnNetWin ()
+                createObj [
+                    "command" ==> dotnet
+                    "args" ==> fsautocompletePath
+                    "transport" ==> 0
+                ]
+
+            let! dotnet = Environment.dotnet
+            match dotnet with
+            | Some dotnet ->
+                return spawnServer dotnet
+            | None ->
+                return! dotnetNotFound ()
     }
     let decorate =
         let decorationType =

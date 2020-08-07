@@ -30,10 +30,22 @@
 * Работать с проектом. К сожалению, сейчас оно работает с каждым исходником отдельно, и те друг о друге ничего не знают, хотя счастье так близко. Такая вот драма.
 
 ## Допустим, я хочу попробовать
-Под Windows нужен .Net Framework >= 4.6.1 (скачать можно [тут](https://dotnet.microsoft.com/download/dotnet-framework), если лень гуглить), а под другие платформы [LSP](https://github.com/gretmn102/FParserQSP) пока не компилируется. Через Mono как-то можно, но лень. Да и чем компилировать исходники QSP'а, если известный [компилятор](http://qsp.su/index.php?option=com_content&task=view&id=52&Itemid=56) ([его исходники](https://github.com/QSPFoundation/qsp/tree/master/txt2gam)) — под Windows?
+Под Windows нужен .Net Framework >= 4.6.1 (скачать можно [тут](https://dotnet.microsoft.com/download/dotnet-framework), если лень гуглить).
 
-### Установка
-Проста до безобразия:
+Под другие платформы нужен .Net Core:
+* Под Linux в целом написано [тут](https://docs.microsoft.com/ru-ru/dotnet/core), для Ubuntu в частности — [тут](https://docs.microsoft.com/en-us/dotnet/core/install/linux-ubuntu)
+    На время написания инструкции достаточно было выполнить:
+    ```bash
+    wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+    sudo dpkg -i packages-microsoft-prod.deb
+
+    sudo apt-get update; \
+      sudo apt-get install -y apt-transport-https && \
+      sudo apt-get update && \
+      sudo apt-get install -y dotnet-sdk-3.1
+    ```
+
+Далее всё гораздо прозаичнее:
 1. Установите [VS Code](https://code.visualstudio.com/Download)
 2. Создайте новый файл с Hello World'ом:
     ```qsp
@@ -54,7 +66,7 @@
 По-хорошему, я мог бы внедрить Watcher, чтобы он компилировал исходник каждый раз, когда его сохраняют, но обойдетесь.
 
 ### У меня уже есть игра, но скомпилирована в `.qsp`, как ее декомпилировать?
-Запускаете (ох и ах) QGen. Жмете `Игра` -> `Экспорт` -> `Текстовый файл формата TXT2QSP...` и, собственно, сохраняете, куда душа пожелает. Не забудьте сменить расширение файла на `.qsps`.
+Запускаете (ох и ах) QGen. Жмете `Игра` -> `Экспорт` -> `Текстовый файл формата TXT2GAM...` и, собственно, сохраняете, куда душа пожелает. Не забудьте сменить расширение файла на `.qsps`.
 
 Кстати, существует отдельная программа [qsp2txt](http://qsp.su/index.php?option=com_agora&task=topic&id=1180&p=1&Itemid=57#p26046), но там же сообщением ниже пишут:
 > Эта утилита экспортит не все локации. Если в игре много локаций, она бесполезна.
