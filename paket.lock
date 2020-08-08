@@ -564,13 +564,13 @@ NUGET
       FSharp.Core (>= 4.3.4) - restriction: >= netstandard2.0
 GIT
   remote: https://github.com/gretmn102/FParserQSP
-     (0b0b663b9239d8eb686dbc0632e14e614a0db20b)
+     (49a3aa9109a4931e94757fc8ed203347984ba9a7)
       build: build.cmd
       os: win
-     (0b0b663b9239d8eb686dbc0632e14e614a0db20b)
+     (49a3aa9109a4931e94757fc8ed203347984ba9a7)
       build: build.sh
       os: linux
-     (0b0b663b9239d8eb686dbc0632e14e614a0db20b)
+     (49a3aa9109a4931e94757fc8ed203347984ba9a7)
       build: build.sh
       os: osx
 GITHUB
