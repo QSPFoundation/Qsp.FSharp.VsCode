@@ -8,3 +8,6 @@
 * build: .Net Core
 * fix: escape args txt2gam, txt2gam output error
 * feat: buildAndRun
+
+### 0.0.4 — 08.08.2020
+* build: net461

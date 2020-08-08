@@ -202,7 +202,7 @@ Target.create "RunScript" (fun _ ->
 )
 
 Target.create "CopyFSAC" (fun _ ->
-    let fsacBin = sprintf "%s/bin/Release/netcoreapp3.1" fsacDir
+    let fsacBin = sprintf "%s/bin/Release" fsacDir
     let releaseBin = "release/bin"
     copyFSAC releaseBin fsacBin
 )

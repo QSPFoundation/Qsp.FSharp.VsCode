@@ -546,7 +546,7 @@ Consider:
         }
         if Environment.isWin then
             let fsautocompletePath =
-                VSCodeExtension.ionidePluginPath () + @"/bin/QspServer.exe"
+                VSCodeExtension.ionidePluginPath () + "/bin/net461/qspserver.exe"
             printfn "%A" fsautocompletePath
             let args =
                 [
@@ -564,7 +564,7 @@ Consider:
             let spawnServer dotnet =
                 let fsautocompletePath =
                     [
-                        VSCodeExtension.ionidePluginPath () + "/bin/qspserver.dll"
+                        VSCodeExtension.ionidePluginPath () + "/bin/netcoreapp3.1/qspserver.dll"
                     ] |> ResizeArray
 
                 createObj [
