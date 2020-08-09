@@ -47,13 +47,6 @@
                 "path": "./fileicons/qsp-icon-theme.json"
             }
         ],
-		"grammars": [
-			{
-				"language": "qsp",
-				"scopeName": "source.qsp",
-				"path": "./syntaxes/qsp.json"
-			}
-        ],
         "debuggers": [
             {
                 "type": "qsp",
