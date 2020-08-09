@@ -700,11 +700,11 @@ module Project =
         //     |> box
         // )) |> context.subscriptions.Add
 
-        if isNull vscode.workspace.rootPath then []
-        else
-            [vscode.workspace.rootPath]
-        |> LanguageService.workspaceLoad
-        
+        // if isNull vscode.workspace.rootPath then []
+        // else
+        //     [vscode.workspace.rootPath]
+        // |> LanguageService.workspaceLoad
+        ()
         // initWorkspace ()
         // |> Promise.onSuccess (fun _ ->
         //     setTimeout (fun _ ->

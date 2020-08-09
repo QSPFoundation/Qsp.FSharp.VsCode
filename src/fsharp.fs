@@ -12,7 +12,10 @@ open Fable.Import.vscode
 
 let activate (context : vscode.ExtensionContext) =
     LanguageService.start context
-    |> Promise.catch (fun error -> promise { () }) // prevent unhandled rejected promises
+    |> Promise.catch (fun error ->
+        promise {
+            vscode.window.showErrorMessage (sprintf "%A" error) |> ignore
+        }) // prevent unhandled rejected promises
     |> Promise.map (fun () ->
         QuickInfo.activate context
         HighlightingProvider.activate context
