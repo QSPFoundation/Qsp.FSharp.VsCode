@@ -524,7 +524,7 @@ Consider:
 
             opts.documentSelector <- Some !^selector
             opts.synchronize <- Some synch
-            opts.revealOutputChannelOn <- Some Client.RevealOutputChannelOn.Never
+            opts.revealOutputChannelOn <- Some Client.RevealOutputChannelOn.Warn
 
 
             opts.initializationOptions <- Some !^(Some initOpts)
