@@ -95,7 +95,8 @@
                     "punctuationSeparatorColon": ["punctuation.separator.colon"],
                     "interpolationBegin": ["punctuation.definition.template-expression.begin.qsp"],
                     "interpolationEnd": ["punctuation.definition.template-expression.end.qsp"],
-                    "constantNumericInteger": ["constant.numeric.integer.nativeint.qsp"]
+                    "constantNumericInteger": ["constant.numeric.integer.nativeint.qsp"],
+                    "metaBraceSquare": ["meta.brace.square.qsp"]
 				}
 			}
 		],
