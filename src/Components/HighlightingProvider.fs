@@ -26,6 +26,7 @@ module HighlightingProvider =
            "interpolationBegin"
            "interpolationEnd"
            "constantNumericInteger"
+           "metaBraceSquare"
        |]
     // TODO: а еще есть [tokenModifiersLegend](https://github.com/microsoft/vscode-extension-samples/blob/f2a57780639bce99099d5128db2d3be83012d0c0/semantic-tokens-sample/src/extension.ts#L14)
     let legend = SemanticTokensLegend(tokenTypes)
