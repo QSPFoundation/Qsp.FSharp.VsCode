@@ -12,7 +12,7 @@
     "fable-loader": "1.0.7",
     "fable-utils": "^1.0.2",
     "mocha": "*",
-    "showdown": "^1.9.0",
+    "showdown": "^1.9.1",
     "toml": "*",
     "vscode": "*",
     "vscode-languageclient": "^6.1.3",
