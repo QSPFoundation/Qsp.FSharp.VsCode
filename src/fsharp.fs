@@ -1,25 +1,16 @@
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Ionide.VSCode.FSharp
-
-open System
 open Fable.Core
-open Fable.Core.JsInterop
 open Fable.Import
-open Ionide.VSCode.Helpers
 open Ionide.VSCode.FSharp
-open Fable.Import.Node.ChildProcess
-open Fable.Import.vscode
 
 let activate (context : vscode.ExtensionContext) =
     LanguageService.start context
     |> Promise.catch (fun error ->
-        promise {
-            vscode.window.showErrorMessage (sprintf "%A" error) |> ignore
-        }) // prevent unhandled rejected promises
+            vscode.window.showErrorMessage (sprintf "error %A" error) |> ignore
+        ) // prevent unhandled rejected promises
     |> Promise.map (fun () ->
-        QuickInfo.activate context
         HighlightingProvider.activate context
-        Project.activate context
     )
 let deactivate(disposables : vscode.Disposable[]) =
     LanguageService.stop ()

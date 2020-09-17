@@ -1,9 +1,8 @@
-dotnet-fable
 Fable.Core
-Fable.Import.Node
-Fable.Import.Browser
+Fable.Node
+Fable.Promise
 Fable.HtmlConverter
+Thoth.Json
 File:Fable.Import.VSCode.fs
 File:Helpers.fs
-File:Fable.Import.Showdown.fs
 File:Fable.Import.VSCode.LanguageServer.fs

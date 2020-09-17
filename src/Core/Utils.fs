@@ -53,9 +53,11 @@ module String =
     let trim (s : string) = s.Trim()
 
     let replace (oldVal : string) (newVal : string) (str : string) : string =
-        match str with
-        | null -> null
-        | _ -> str.Replace (oldVal, newVal)
+        if str = Fable.Core.JS.undefined then null
+        else
+            match str with
+            | null -> null
+            | _ -> str.Replace (oldVal, newVal)
 
     let split separator (s : string) = s.Split separator
 
@@ -122,16 +124,15 @@ module Utils =
 [<AutoOpen>]
 module JS =
     open Fable.Core
-    open Fable.Import.Node
 
     /// Schedules execution of a one-time callback after delay milliseconds.
     /// Returns a Timeout for use with `clearTimeout`.
     [<Emit("setTimeout($0, $1)")>]
-    let setTimeout (callback : unit -> unit) (delay : float) : Base.NodeJS.Timer = jsNative
+    let setTimeout (callback : unit -> unit) (delay : float) : Node.Base.Timer = jsNative
 
     /// Cancels a Timeout object created by `setTimeout`.
     [<Emit("clearTimeout($0)")>]
-    let clearTimeout (timeout : Base.NodeJS.Timer) : unit = jsNative
+    let clearTimeout (timeout : Node.Base.Timer) : unit = jsNative
 
     [<Emit("debugger")>]
     let debugger () : unit = failwith "JS Only"
@@ -208,18 +209,17 @@ module Array =
 
 module Promise =
 
-    open Fable.Import.JS
     open Ionide.VSCode.Helpers
 
-    let suppress (pr : Promise<'T>) =
-        pr |> Ionide.VSCode.Helpers.Promise.catch (fun _ -> promise { () })
+    let suppress pr =
+        pr |> Promise.catch (fun _ -> promise { () })
 
     let executeForAll f items =
         match items with
-        | [] -> Ionide.VSCode.Helpers.Promise.lift (null |> unbox)
+        | [] -> Promise.lift (null |> unbox)
         | [x] -> f x
         | x::tail ->
-            tail |> List.fold (fun acc next -> acc |> Ionide.VSCode.Helpers.Promise.bind (fun _ -> f next)) (f x)
+            tail |> List.fold (fun acc next -> acc |> Promise.bind (fun _ -> f next)) (f x)
 
 module Event =
 
@@ -288,11 +288,11 @@ type ShowStatus private (panel : WebviewPanel, body : string) as this =
             let! doc = vscode.workspace.openTextDocument uri
             return doc.getText()
         }
-        |> Promise.onSuccess (fun bodyStr ->
+        |> Promise.map (fun bodyStr ->
             printfn "%s" bodyStr
             instance <- new ShowStatus(panel, bodyStr)
         )
-        |> Promise.onFail (fun err ->
+        |> Promise.catch (fun err ->
             JS.console.error("ShowStatus.CreateOrShow failed:\n", err)
             vscode.window.showErrorMessage("We couldn't generate the status report")
             |> ignore

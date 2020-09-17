@@ -61,8 +61,7 @@ release_test/bin
 
 temp
 .vs
-*.js
-*.js.map
+release/Extension.js
 .orig
 release.cmd
 release-preview.cmd
