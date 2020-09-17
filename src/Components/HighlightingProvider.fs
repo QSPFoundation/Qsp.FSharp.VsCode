@@ -38,12 +38,17 @@ module HighlightingProvider =
                 promise {
                     let builder = SemanticTokensBuilder(legend)
                     let! res = LanguageService.getHighlighting (textDocument.fileName)
-                    res.Data.Highlights
-                    |> Array.sortBy(fun n -> n.Range.StartLine * 1000000 + n.Range.StartColumn)
-                    |> Array.iter (fun n ->
-                        builder.push(CodeRange.fromDTO n.Range, n.TokenType)
-                    )
-                    return builder.build()
+                    match res with
+                    | Ok res ->
+                        res.Data.Highlights
+                        |> Array.sortBy(fun n -> n.Range.StartLine * 1000000 + n.Range.StartColumn)
+                        |> Array.iter (fun n ->
+                            builder.push(CodeRange.fromDTO n.Range, n.TokenType)
+                        )
+                        return builder.build()
+                    | Error x ->
+                        vscode.window.showErrorMessage x |> ignore
+                        return null
                 } |> unbox
         }
 
