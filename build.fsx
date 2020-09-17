@@ -2,7 +2,21 @@
 // FAKE build script
 // --------------------------------------------------------------------------------------
 
-#r "paket: groupref build //"
+#r "paket:
+  nuget Fake.Core.Target
+  nuget Fake.Core.Process
+  nuget Fake.Core.ReleaseNotes
+  nuget Fake.Core.Environment
+  nuget Fake.Core.UserInput
+  nuget Fake.DotNet.Cli
+  nuget Fake.DotNet.AssemblyInfoFile
+  nuget Fake.DotNet.Paket
+  nuget Fake.DotNet.MsBuild
+  nuget Fake.IO.FileSystem
+  nuget Fake.IO.Zip
+  nuget Fake.Api.GitHub
+  nuget Fake.Tools.Git
+  nuget Fake.JavaScript.Yarn //"
 #load ".fake/build.fsx/intellisense.fsx"
 
 open System
@@ -30,7 +44,7 @@ let gitHome = "https://github.com/" + gitOwner
 // The name of the project on GitHub
 let gitName = "QSP-VSCode"
 
-let fsacDir = "paket-files/github.com/gretmn102/FParserQSP/QspServer" // \bin\Debug\net461\QspServer.exe
+let fsacDir = "paket-files/github.com/gretmn102/FParserQSP/QspServer"
 
 // Read additional information from the release notes document
 let releaseNotesData =
@@ -57,49 +71,22 @@ let platformTool tool path =
             | Some v -> v
 
 let npmTool =
-    platformTool "npm"  "npm.cmd"
+    platformTool "npm" "npm.cmd"
 
 let vsceTool = lazy (platformTool "vsce" "vsce.cmd")
 
-let runFable additionalArgs =
-    let cmd = "webpack -- --config webpack.config.js " + additionalArgs
-    DotNet.exec (fun p -> { p with WorkingDirectory = "src"; } ) "fable" cmd
-    |> ignore
+let runNpm additionalArgs =
+    run npmTool ("run " + additionalArgs) ""
 
-let copyFSAC releaseBin fsacBin =
+let copyLSP releaseBin fsacBin =
     Directory.ensure releaseBin
     Shell.cleanDir releaseBin
     Shell.copyDir releaseBin fsacBin (fun _ -> true)
-
-let copyFSACNetcore releaseBinNetcore fsacBinNetcore =
-    Directory.ensure releaseBinNetcore
-    Shell.cleanDir releaseBinNetcore
-    Shell.copyDir releaseBinNetcore fsacBinNetcore (fun _ -> true)
 
 let copyForge paketFilesForge releaseForge =
     Directory.ensure releaseForge
     Shell.cleanDir releaseForge
     Shell.copyDir releaseForge (sprintf "%s/temp/" paketFilesForge) (fun _ -> true)
-
-let copyGrammar fsgrammarDir fsgrammarRelease =
-    Directory.ensure fsgrammarRelease
-    Shell.cleanDir fsgrammarRelease
-    Shell.copyFiles fsgrammarRelease [
-        fsgrammarDir </> "qsp.json"
-    ]
-
-let copySchemas fsschemaDir fsschemaRelease =
-    Directory.ensure fsschemaRelease
-    Shell.cleanDir fsschemaRelease
-    Shell.copyFile fsschemaRelease (fsschemaDir </> "fableconfig.json")
-    Shell.copyFile fsschemaRelease (fsschemaDir </> "wsconfig.json")
-
-let copyLib libDir releaseDir =
-    Directory.ensure releaseDir
-    Shell.copyDir (releaseDir </> "x64") (libDir </> "x64") (fun _ -> true)
-    Shell.copyDir (releaseDir </> "x86") (libDir </> "x86") (fun _ -> true)
-    Shell.copyFile releaseDir (libDir </> "libe_sqlite3.so")
-    Shell.copyFile releaseDir (libDir </> "libe_sqlite3.dylib")
 
 let buildPackage dir =
     Process.killAllByName "vsce"
@@ -170,10 +157,13 @@ let releaseGithub (release: ReleaseNotes.ReleaseNotes) =
 // --------------------------------------------------------------------------------------
 Target.initEnvironment ()
 
-Target.create "Clean" (fun _ ->
-    Shell.cleanDir "./temp"
+let copy () =
     Shell.copyFiles "release" ["README.md"; "LICENSE.md"]
     Shell.copyFile "release/CHANGELOG.md" "RELEASE_NOTES.md"
+
+Target.create "Clean" (fun _ ->
+    Shell.cleanDir "./temp"
+    copy ()
 )
 
 Target.create "YarnInstall" <| fun _ ->
@@ -183,49 +173,26 @@ Target.create "DotNetRestore" <| fun _ ->
     DotNet.restore id "src"
 
 Target.create "Watch" (fun _ ->
-    runFable "--watch"
+    runNpm "watch"
 )
 
 Target.create "InstallVSCE" ( fun _ ->
-    Process.killAllByName  "npm"
+    Process.killAllByName "npm"
     run npmTool "install -g vsce" ""
 )
 
 Target.create "CopyDocs" (fun _ ->
-    Shell.copyFiles "release" ["README.md"; "LICENSE.md"]
-    Shell.copyFile "release/CHANGELOG.md" "RELEASE_NOTES.md"
+    copy ()
 )
 
 Target.create "RunScript" (fun _ ->
-    // Ideally we would want a production (minized) build but UglifyJS fail on PerMessageDeflate.js as it contains non-ES6 javascript.
-    runFable ""
+    runNpm "build"
 )
 
-Target.create "CopyFSAC" (fun _ ->
+Target.create "CopyLSP" (fun _ ->
     let fsacBin = sprintf "%s/bin/Release" fsacDir
     let releaseBin = "release/bin"
-    copyFSAC releaseBin fsacBin
-)
-
-Target.create "CopyGrammar" (fun _ ->
-    let fsgrammarDir = "paket-files/github.com/ionide/ionide-fsgrammar/grammar"
-    let fsgrammarRelease = "release/syntaxes"
-
-    copyGrammar fsgrammarDir fsgrammarRelease
-)
-
-Target.create "CopySchemas" (fun _ ->
-    let fsschemaDir = "schemas"
-    let fsschemaRelease = "release/schemas"
-
-    copySchemas fsschemaDir fsschemaRelease
-)
-
-Target.create "CopyLib" (fun _ ->
-    let libDir = "lib"
-    let releaseDir = "release/bin"
-
-    copyLib libDir releaseDir
+    copyLSP releaseBin fsacBin
 )
 
 Target.create "BuildPackage" ( fun _ ->
@@ -260,22 +227,14 @@ Target.create "BuildPackages" ignore
 
 "Clean"
 ==> "RunScript"
-==> "Default"
-
-"Clean"
-==> "RunScript"
 ==> "CopyDocs"
-==> "CopyFSAC"
-// ==> "CopyGrammar"
-// ==> "CopySchemas"
-// ==> "CopyLib"
+==> "CopyLSP"
 ==> "Build"
-
 
 "YarnInstall" ==> "Build"
 "DotNetRestore" ==> "Build"
 
-"Default" // TODO: "Build"
+"Build"
 ==> "SetVersion"
 ==> "BuildPackage"
 ==> "ReleaseGitHub"
