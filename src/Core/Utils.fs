@@ -318,8 +318,15 @@ module VSCodeExtension =
     let private extensionName = "qsp"
 
     let ionidePluginPath () =
-        // TODO: or `feringcorp`?
-        VSCode.getPluginPath (sprintf "Fering.%s" extensionName)
+        let path = extensions.getExtension (sprintf "Fering.%s" extensionName)
+        if path = JS.undefined then
+            let path = extensions.getExtension (sprintf "QSPFoundation.%s" extensionName)
+            if path = JS.undefined then
+                failwith "Not found QSPFoundation or Fering"
+            else
+                path.extensionPath
+        else
+            path.extensionPath
 
     let workbenchViewId () =
         sprintf "workbench.view.extension.%s" extensionName

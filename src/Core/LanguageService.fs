@@ -108,10 +108,8 @@ module LanguageService =
             let req : Types.HighlightingRequest= {
                 FileName = f
             }
-            printfn "fsharp/highlighting"
             cl.sendRequest("fsharp/highlighting", req)
             |> Promise.map (fun (res: Types.PlainNotification) ->
-                printfn "%s" res.content
                 res.content |> Decode.Auto.fromString<HighlightingResult>
             )
             |> Promise.catch (fun e -> Error (sprintf "%A" e))
