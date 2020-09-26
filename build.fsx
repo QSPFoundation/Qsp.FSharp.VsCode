@@ -195,6 +195,9 @@ Target.create "CopyLSP" (fun _ ->
     copyLSP releaseBin fsacBin
 )
 
+Target.create "JustBuildPackage" ( fun _ ->
+    buildPackage "release"
+)
 Target.create "BuildPackage" ( fun _ ->
     buildPackage "release"
 )
@@ -221,6 +224,8 @@ Target.create "BuildExp" ignore
 Target.create "Release" ignore
 Target.create "ReleaseExp" ignore
 Target.create "BuildPackages" ignore
+
+"Clean" ==> "JustBuildPackage"
 
 "YarnInstall" ==> "RunScript"
 "DotNetRestore" ==> "RunScript"
