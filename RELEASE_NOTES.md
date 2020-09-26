@@ -1,3 +1,17 @@
+### 0.0.6 — 26.09.2020
+* parser: feat: `@location`
+* parser: fix: `$var` renamed
+* parser: feat: loop construct
+* parser: fix: local vars replaced previous vars
+* parser: `#` is not specificator (#13)
+* parser: scope in dynamic code
+* parser: fix: explicitVar locale
+* parser: scopes for `if`, `act`, `for`
+* parser: feat: local
+* parser: scope
+* server: fix publishDiagnostic error (#16)
+* server: remove "unknown" in diagnostics messages
+
 ### 0.0.5 — 03.09.2020
 * parser: `=*`, `=+`, `=-`, `=/` removed
 * feat: location outline
