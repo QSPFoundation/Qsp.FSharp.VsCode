@@ -87,6 +87,7 @@
 					"storage": ["storage.type.js"],
 					"procedure": ["keyword.symbol.qsp"],
                     "keywordControl": ["keyword.control.qsp"],
+                    "keywordSymbol": ["keyword.symbol.qsp"],
                     "operatorArithmetic": ["keyword.operator.arithmetic.qsp"],
                     "operatorAssignment": ["keyword.operator.assignment.qsp"],
                     "operatorComparison": ["keyword.operator.comparison.qsp"],

@@ -17,6 +17,7 @@ module HighlightingProvider =
            "storage"
            "procedure"
            "keywordControl"
+           "keywordSymbol"
            "operatorArithmetic"
            "operatorAssignment"
            "operatorComparison"
