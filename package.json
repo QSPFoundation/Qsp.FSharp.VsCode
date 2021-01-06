@@ -8,7 +8,7 @@
     "@babel/plugin-transform-modules-commonjs": "^7.10.4",
     "@babel/preset-env": "^7.11.5",
     "@types/vscode": "^1.48.0",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "fable-compiler": "^2.13.0",
     "fable-loader": "^2.1.9",
     "fable-utils": "^1.0.2",
