@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\paket-files\ionide\ionide-vscode-helpers\src\Fable.Import.Showdown.fs">
+      <Paket>True</Paket>
+      <Link>paket-files/Fable.Import.Showdown.fs</Link>
+    </Compile>
+    <Compile Include="..\paket-files\ionide\ionide-vscode-helpers\src\Fable.Import.VSCode.fs">
+      <Paket>True</Paket>
+      <Link>paket-files/Fable.Import.VSCode.fs</Link>
+    </Compile>
+    <Compile Include="..\paket-files\ionide\ionide-vscode-helpers\src\Fable.Import.VSCode.LanguageServer.fs">
+      <Paket>True</Paket>
+      <Link>paket-files/Fable.Import.VSCode.LanguageServer.fs</Link>
+    </Compile>
+    <Compile Include="..\paket-files\ionide\ionide-vscode-helpers\src\Helpers.fs">
+      <Paket>True</Paket>
+      <Link>paket-files/Helpers.fs</Link>
+    </Compile>
+    <None Include="paket.references" />
+    <Compile Include="Imports/Node.Util.fs" />
+    <Compile Include="Core/DTO.fs" />
+    <Compile Include="Core/Utils.fs" />
+    <Compile Include="Core/Environment.fs" />
+    <Compile Include="Core/Logging.fs" />
+    <Compile Include="Core/LanguageService.fs" />
+    <Compile Include="Core/Project.fs" />
+    <Compile Include="Components/Diagnostics.fs" />
+    <Compile Include="Components/Gitignore.fs" />
+    <Compile Include="Components/LanguageConfiguration.fs" />
+    <Compile Include="Components/SignatureData.fs" />
+    <Compile Include="Components/Fsi.fs" />
+    <Compile Include="Components/ScriptRunner.fs" />
+    <Compile Include="Components/Forge.fs" />
+    <Compile Include="Components/LineLens.fs" />
+    <Compile Include="Components/QuickInfo.fs" />
+    <Compile Include="Components/QuickInfoProject.fs" />
+    <Compile Include="Components/MSBuild.fs" />
+    <Compile Include="Components/Help.fs" />
+    <Compile Include="Components/Debugger.fs" />
+    <Compile Include="Components/SolutionExplorer.fs" />
+    <Compile Include="Components/HtmlConverter.fs" />
+    <Compile Include="Components/InfoPanel.fs" />
+    <Compile Include="Components/CodeLensHelpers.fs" />
+    <Compile Include="Components/FakeTargetsOutline.fs" />
+    <Compile Include="Components/HighlightingProvider.fs" />
+    <Compile Include="fsharp.fs" />
+  </ItemGroup>
+  <Import Project="..\.paket\Paket.Restore.targets" />
+</Project>
