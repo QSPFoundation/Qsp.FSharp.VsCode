@@ -211,6 +211,10 @@ module Promise =
 
     open Ionide.VSCode.Helpers
 
+    let inline empty<'T when 'T : null> =
+        // Promise.lift (Microsoft.FSharp.Core.Result.Ok ())
+        Promise.lift (null : 'T)
+
     let suppress pr =
         pr |> Promise.catch (fun _ -> promise { () })
 

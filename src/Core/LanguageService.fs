@@ -27,11 +27,6 @@ module Notifications =
 
     let mutable notifyWorkspaceHandler : Option<Choice<ProjectResult,ProjectLoadingResult,(string * ErrorData),string> -> unit> = None
 
-module Promise =
-    let inline empty<'T when 'T : null> =
-        // Promise.lift (Microsoft.FSharp.Core.Result.Ok ())
-        Promise.lift (null : 'T)
-
 module LanguageService =
     module Types =
         type PlainNotification= { content: string }
