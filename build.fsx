@@ -44,7 +44,7 @@ let gitHome = "https://github.com/" + gitOwner
 // The name of the project on GitHub
 let gitName = "QSP-VSCode"
 
-let fsacDir = "paket-files/github.com/gretmn102/FParserQSP/QspServer"
+let fsacDir = "packages/languageserver/Qsp.FSharp.LanguageServer"
 
 // Read additional information from the release notes document
 let releaseNotesData =
@@ -190,7 +190,7 @@ Target.create "RunScript" (fun _ ->
 )
 
 Target.create "CopyLSP" (fun _ ->
-    let fsacBin = sprintf "%s/bin/Release" fsacDir
+    let fsacBin = sprintf "%s/lib" fsacDir
     let releaseBin = "release/bin"
     copyLSP releaseBin fsacBin
 )
