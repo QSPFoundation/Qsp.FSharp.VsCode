@@ -14,10 +14,9 @@
 		"Programming Languages",
 		"Snippets"
 	],
-    "license": "SEE LICENSE IN LICENSE.md",
-    "icon": "icon.png",
-	"bugs": {
-	},
+	"license": "SEE LICENSE IN LICENSE.md",
+	"icon": "icon.png",
+	"bugs": {},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/gretmn102/QSP-VSCode"
@@ -39,37 +38,37 @@
 				],
 				"configuration": "./language-configuration.json"
 			}
-        ],
-        "iconThemes": [
-            {
-                "id": "qsp",
-                "label": "QSP Icon Theme",
-                "path": "./fileicons/qsp-icon-theme.json"
-            }
-        ],
-        "debuggers": [
-            {
-                "type": "qsp",
+		],
+		"iconThemes": [
+			{
+				"id": "qsp",
+				"label": "QSP Icon Theme",
+				"path": "./fileicons/qsp-icon-theme.json"
+			}
+		],
+		"debuggers": [
+			{
+				"type": "qsp",
 				"label": "Quest Soft Player",
 				"languages": [
 					"qsp"
-                ],
-                "configurationAttributes": {
-                    "launch": {
+				],
+				"configurationAttributes": {
+					"launch": {
 						"required": [
 							"program"
-                        ],
-                        "properties": {
+						],
+						"properties": {
 							"program": {
 								"type": "string",
 								"description": "Absolute path to a .qsps file.",
 								"default": "${file}"
 							}
-                        }
-                    }
-                }
-            }
-        ],
+						}
+					}
+				}
+			}
+		],
 		"commands": [
 			{
 				"command": "extension.build",
@@ -84,20 +83,48 @@
 			{
 				"language": "qsp",
 				"scopes": {
-					"storage": ["storage.type.js"],
-					"procedure": ["keyword.symbol.qsp"],
-                    "keywordControl": ["keyword.control.qsp"],
-                    "keywordSymbol": ["keyword.symbol.qsp"],
-                    "operatorArithmetic": ["keyword.operator.arithmetic.qsp"],
-                    "operatorAssignment": ["keyword.operator.assignment.qsp"],
-                    "operatorComparison": ["keyword.operator.comparison.qsp"],
-                    "operatorRelational": ["keyword.operator.relational.qsp"],
-                    "punctuationTerminatorStatement": ["punctuation.terminator.statement.qsp"],
-                    "punctuationSeparatorColon": ["punctuation.separator.colon"],
-                    "interpolationBegin": ["punctuation.definition.template-expression.begin.qsp"],
-                    "interpolationEnd": ["punctuation.definition.template-expression.end.qsp"],
-                    "constantNumericInteger": ["constant.numeric.integer.nativeint.qsp"],
-                    "metaBraceSquare": ["meta.brace.square.qsp"]
+					"storage": [
+						"storage.type.js"
+					],
+					"procedure": [
+						"keyword.symbol.qsp"
+					],
+					"keywordControl": [
+						"keyword.control.qsp"
+					],
+					"keywordSymbol": [
+						"keyword.symbol.qsp"
+					],
+					"operatorArithmetic": [
+						"keyword.operator.arithmetic.qsp"
+					],
+					"operatorAssignment": [
+						"keyword.operator.assignment.qsp"
+					],
+					"operatorComparison": [
+						"keyword.operator.comparison.qsp"
+					],
+					"operatorRelational": [
+						"keyword.operator.relational.qsp"
+					],
+					"punctuationTerminatorStatement": [
+						"punctuation.terminator.statement.qsp"
+					],
+					"punctuationSeparatorColon": [
+						"punctuation.separator.colon"
+					],
+					"interpolationBegin": [
+						"punctuation.definition.template-expression.begin.qsp"
+					],
+					"interpolationEnd": [
+						"punctuation.definition.template-expression.end.qsp"
+					],
+					"constantNumericInteger": [
+						"constant.numeric.integer.nativeint.qsp"
+					],
+					"metaBraceSquare": [
+						"meta.brace.square.qsp"
+					]
 				}
 			}
 		],
