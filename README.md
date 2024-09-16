@@ -2,7 +2,7 @@
 
 ## Смена публикатора в VSCode Marketplace
 
-Раньше расширение находилось [тут](https://marketplace.visualstudio.com/items?itemName=Fering.qsp), но из-за непонятной блокировки аккаунта (подробности — [тут](https://github.com/QSPFoundation/Qsp.FSharp.VsCode/issues/44)) расширение приходится публиковать [здесь](https://marketplace.visualstudio.com/items?itemName=QSPFoundation.qsp-ext). Может быть, старый аккаунт когда-нибудь разблокируют господа из Microsoft, но в это слабо верится.
+Раньше расширение находилось [тут](https://marketplace.visualstudio.com/items?itemName=Fering.qsp), но из-за непонятной блокировки аккаунта (подробности — [тут](https://github.com/QSPFoundation/Qsp.FSharp.VsCode/issues/44)) расширение приходится публиковать [здесь](https://marketplace.visualstudio.com/items?itemName=QSPFoundation.qsp-official). Может быть, старый аккаунт когда-нибудь разблокируют господа из Microsoft, но в это слабо верится.
 
 ## Зочем?
 
