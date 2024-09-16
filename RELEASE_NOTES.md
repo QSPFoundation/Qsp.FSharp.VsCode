@@ -1,3 +1,6 @@
+### 0.1.1 — 16.09.2024
+* chore: change publisher to QSPFoundation
+
 ### 0.1.0 — 12.08.2024
 * feat: recognize text between locations as a comment
 * fix: optional `&` between instructions in a line
