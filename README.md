@@ -1,5 +1,9 @@
 # Quest Soft Player (QSP) language provider
 
+## Смена публикатора в VSCode Marketplace
+
+Раньше расширение находилось [тут](https://marketplace.visualstudio.com/items?itemName=Fering.qsp), но из-за непонятной блокировки аккаунта (подробности — [тут](https://github.com/QSPFoundation/Qsp.FSharp.VsCode/issues/44)) расширение приходится публиковать [здесь](https://marketplace.visualstudio.com/items?itemName=QSPFoundation.qsp). Может быть, старый аккаунт когда-нибудь разблокируют господа из Microsoft, но в это слабо верится.
+
 ## Зочем?
 
 — А-а, зачем мне эта ерунда, если уже есть [QGen](http://qsp.su/index.php?option=com_content&task=view&id=46&Itemid=56)?! Обчитаются своих книжечек, а потом в гаражах кодють! Такую страну про...
