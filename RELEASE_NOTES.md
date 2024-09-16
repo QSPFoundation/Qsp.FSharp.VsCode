@@ -1,4 +1,7 @@
 ### 0.1.2 — 16.09.2024
+* chore: change extension name to "qsp-official"
+
+### 0.1.2 — 16.09.2024
 * chore: change extension name to "qsp-ext"
 
 ### 0.1.1 — 16.09.2024
