@@ -319,7 +319,7 @@ type ShowStatus private (panel : WebviewPanel, body : string) as this =
 [<RequireQualifiedAccess>]
 module VSCodeExtension =
 
-    let private extensionName = "qsp"
+    let private extensionName = "qsp-official"
 
     let ionidePluginPath () =
         let path = extensions.getExtension (sprintf "Fering.%s" extensionName)
