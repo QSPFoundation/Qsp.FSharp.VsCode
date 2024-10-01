@@ -1,4 +1,7 @@
-### 0.1.2 — 16.09.2024
+### 0.1.4 — 01.10.2024
+* fix: not found QSPFoundation or Fering and client not ready
+
+### 0.1.3 — 16.09.2024
 * chore: change extension name to "qsp-official"
 
 ### 0.1.2 — 16.09.2024
